@@ -1,21 +1,29 @@
-PAPER = paper
-TEX = $(wildcard *.tex)
-BIB = references.bib
-FIGS = $(wildcard imgs/*.png)
+# Build ACM and IEEE PDFs from shared section files.
+# Usage:
+#   make           # builds both PDFs
+#   make acm       # builds acm.pdf
+#   make ieee      # builds ieee.pdf
+#   make clean
 
-.PHONY: all clean view
+PAPERS := acm ieee
 
-all: $(PAPER).pdf
+COMMON_TEX := intro.tex approach.tex evaluation.tex outro.tex
+BIB := references.bib
+FIGS := $(wildcard imgs/*.*)
 
-view: $(PAPER).pdf
-	open $(PAPER).pdf
+.PHONY: all clean view view-acm view-ieee acm ieee
 
-$(PAPER).pdf: $(TEX) $(BIB) $(FIGS)
-	pdflatex $(PAPER)
-	bibtex $(PAPER)
-	pdflatex $(PAPER)
-	pdflatex $(PAPER)
+all: $(PAPERS:=.pdf)
+
+acm: acm.pdf
+ieee: ieee.pdf
+
+%.pdf: %.tex $(COMMON_TEX) $(BIB) $(FIGS)
+	pdflatex $*
+	bibtex $*
+	pdflatex $*
+	pdflatex $*
 
 clean:
-	rm -f *.aux *.bbl *.blg *.log *.out $(PAPER).pdf
-
+	rm -f *.aux *.bbl *.blg *.log *.out *.toc *.lof *.lot *.bcf *.run.xml \
+	      acm.pdf ieee.pdf

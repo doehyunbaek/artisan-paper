@@ -1,5 +1,6 @@
 \documentclass[acmsmall,screen,review,anonymous]{acmart}
 
+% Minimal, venue-agnostic packages (no project-specific macros)
 \usepackage[capitalise,nameinlink]{cleveref}
 \usepackage[many]{tcolorbox}
 \usepackage{listings}
@@ -8,7 +9,17 @@
 \usepackage{subcaption}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{makecell}
+
 \begin{document}
+
+\title{Anonymous Submission}
+\begin{abstract}
+    This is an anonymous submission by the anonymous authors
+\end{abstract}
+\maketitle
 
 \input{intro}
 \input{approach}
@@ -17,5 +28,6 @@
 
 \bibliographystyle{ACM-Reference-Format}
 \bibliography{references}
+
 \end{document}
 \endinput
