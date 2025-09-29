@@ -1,14 +1,14 @@
 \section{Introduction}
 \label{s:introduction}
 
-Since the pilot of the artifact evaluation at ESEC/FSE 2011, artifact evaluation has become a standard at a software engineering and programming language communities~\cite{Krishnamurthi2015TheRS}.
+Since the pilot of the artifact evaluation at ESEC/FSE 2011, artifact evaluation has become a standard at a software engineering and programming language communities~\cite{DBLP:journals/cacm/KrishnamurthiV15}.
 One of the main goals of artifact evaluation is reproducibility, which is defined as obtainment of the similar experimental outcome with the same experimental setup by the different team~\cite{acm-artifact-badging-v1_1}
-Reproducibility is one of the stated goals of artifact evaluation in the Calls for Artifacts and generally regarded as one of the most important goal of the artifact evaluation by the participants.~\cite{Hermann2020CommunityEF}.
-In addition, there has been studies reporting that artifact evaluation leads to more available, maintained, and documented artifacts~\cite{Winter2022ARS}.
+Reproducibility is one of the stated goals of artifact evaluation in the Calls for Artifacts and generally regarded as one of the most important goal of the artifact evaluation by the participants.~\cite{DBLP:conf/sigsoft/Hermann0S20}.
+In addition, there has been studies reporting that artifact evaluation leads to more available, maintained, and documented artifacts~\cite{DBLP:conf/se/0001T0C0H024}.
 
 Despite these benefits, artifact evaluation practiced in its current form is notoriously labor-intensive.
-There has been report that an individual artifact evaluation could take from eight to ten hours, which is more than the usual time for the paper review~\cite{Hermann2022WhatHA}.
-There has been mixed evidence whether papers that underwent artifact evaluation has more visibility, with some studies suggestiing higher visibility~\cite{Heumller2020PublishOP} and some studies finding no correlation~\cite{Winter2022ARS}.
+There has been report that an individual artifact evaluation could take from eight to ten hours, which is more than the usual time for the paper review~\cite{DBLP:journals/ieeesp/Hermann22}.
+There has been mixed evidence whether papers that underwent artifact evaluation has more visibility, with some studies suggestiing higher visibility~\cite{DBLP:journals/ese/HeumullerNKO20} and some studies finding no correlation~\cite{DBLP:conf/se/0001T0C0H024}.
 Considering the significant manual effort, it is unclear whether the benefit for individual researchers as to do artifact evalutaion outweight the cost as both the authors and the users of the artifact.
 
 \begin{table}[t]
@@ -18,7 +18,7 @@ Considering the significant manual effort, it is unclear whether the benefit for
 \renewcommand{\arraystretch}{1.25}
 \begin{tabularx}{\linewidth}{lXXXX}
 \toprule
- & \textbf{SUPER}~\cite{Bogin2024SUPEREA} & \textbf{CORE-Bench}~\cite{Siegel2024COREBenchFT} & \textbf{Repro-Bench}~\cite{Hu2025REPROBenchCA} & \textbf{\benchmark~(Ours)} \\
+ & \textbf{SUPER}~\cite{DBLP:conf/emnlp/BoginYG0BCSK24} & \textbf{CORE-Bench}~\cite{DBLP:journals/tmlr/SiegelKNSN24} & \textbf{Repro-Bench}~\cite{DBLP:conf/acl/HuZLWPK25} & \textbf{\benchmark~(Ours)} \\
 \midrule
 Domain & ML, NLP & CS, SS, Med & SS & SE \\
 \#Paper
@@ -44,8 +44,8 @@ Judging
 To mitigate this, there has been a recent effort to benchmark the performance of LLM agents on reproducing research results.
 Table~\ref{t:benchmark_comparison} summarizes these recent efforts.
 SUPER is a benchmark that evaluates the capability of LLM agents in reproducing results from ML and NLP papers~\cite{Bogin2024SUPEREA}.
-CORE-Bench, while having similar overall goal, differs by targeting broader domain (Social Science, Medicine) and including vision-language tasks ~\cite{Siegel2024COREBenchFT}.
-Repro-Bench focuses on reproduction of social science research, and makes the problem setup more realistic~\cite{Hu2025REPROBenchCA}.
+CORE-Bench, while having similar overall goal, differs by targeting broader domain (Social Science, Medicine) and including vision-language tasks ~\cite{DBLP:journals/tmlr/SiegelKNSN24}.
+Repro-Bench focuses on reproduction of social science research, and makes the problem setup more realistic~\cite{DBLP:conf/acl/HuZLWPK25}.
 
 However, We find several limitations with the existing benchmarks:
 (1) Existing benchmarks largely formulate the problem as an output prediction problem, which undermines its credibility.
