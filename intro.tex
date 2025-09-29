@@ -1,11 +1,82 @@
 \section{Introduction}
 \label{s:introduction}
 
-This is a sample citation \cite{wasm-r3}.
+Since the pilot of the artifact evaluation at ESEC/FSE 2011, artifact evaluation has become a standard at a software engineering and programming language communities~\cite{Krishnamurthi2015TheRS}.
+One of the main goals of artifact evaluation is reproducibility, which is defined as obtainment of the similar experimental outcome with the same experimental setup by the different team~\cite{acm-artifact-badging-v1_1}
+Reproducibility is one of the stated goals of artifact evaluation in the Calls for Artifacts and generally regarded as one of the most important goal of the artifact evaluation by the participants.~\cite{Hermann2020CommunityEF}.
+In addition, there has been studies reporting that artifact evaluation leads to more available, maintained, and documented artifacts~\cite{Winter2022ARS}.
+
+Despite these benefits, artifact evaluation practiced in its current form is notoriously labor-intensive.
+There has been report that an individual artifact evaluation could take from eight to ten hours, which is more than the usual time for the paper review~\cite{Hermann2022WhatHA}.
+There has been mixed evidence whether papers that underwent artifact evaluation has more visibility, with some studies suggestiing higher visibility~\cite{Heumller2020PublishOP} and some studies finding no correlation~\cite{Winter2022ARS}.
+Considering the significant manual effort, it is unclear whether the benefit for individual researchers as to do artifact evalutaion outweight the cost as both the authors and the users of the artifact.
+
+\begin{table}[t]
+\caption{Comparison of prior benchmarks and our benchmark. ML stands for Machine Learning. NLP stands for Natural Language Processing. CS stands for Computer Science. SS stands for Social Science. Med stands for Medicine. SE stands for Software Engineering.}
+\label{t:benchmark_comparison}
+\centering
+\renewcommand{\arraystretch}{1.25}
+\begin{tabularx}{\linewidth}{lXXXX}
+\toprule
+ & \textbf{SUPER}~\cite{Bogin2024SUPEREA} & \textbf{CORE-Bench}~\cite{Siegel2024COREBenchFT} & \textbf{Repro-Bench}~\cite{Hu2025REPROBenchCA} & \textbf{\benchmark~(Ours)} \\
+\midrule
+Domain & ML, NLP & CS, SS, Med & SS & SE \\
+\#Paper
+& 45 & 90\textsuperscript{1} & 112 & 35 \\
+\#Task
+& 45\textsuperscript{2} & 270 & 112 & 162 \\
+\#Programming Languages & 1 & 2 & 6 & 10 \\
+\#Inconsistensies Reported & 0 & 0 & 0 & 10 \\
+Time Limit
+& 30 minutes & 45 minutes & 2 hours & 8 hours \\
+
+Judging
+& Accuracy of outputs & Accuracy of outputs & Accuracy of reproducibility scores & \#Script that reproduces the claim \\
+
+\bottomrule
+\end{tabularx}
+
+\vspace{2mm}
+\footnotesize\emph{Note.} \textsuperscript{1} 37 for CS
+\footnotesize\emph{Note.} \textsuperscript{2} In terms of Expert set, They additionally provide 152 masked sets and 604 Auto sets.
+\end{table}
+
+To mitigate this, there has been a recent effort to benchmark the performance of LLM agents on reproducing research results.
+Table~\ref{t:benchmark_comparison} summarizes these recent efforts.
+SUPER is a benchmark that evaluates the capability of LLM agents in reproducing results from ML and NLP papers~\cite{Bogin2024SUPEREA}.
+CORE-Bench, while having similar overall goal, differs by targeting broader domain (Social Science, Medicine) and including vision-language tasks ~\cite{Siegel2024COREBenchFT}.
+Repro-Bench focuses on reproduction of social science research, and makes the problem setup more realistic~\cite{Hu2025REPROBenchCA}.
+
+However, We find several limitations with the existing benchmarks:
+(1) Existing benchmarks largely formulate the problem as an output prediction problem, which undermines its credibility.
+SUPER and CORE-Bench only measures the accuracy of the reproduction outcome by the agents; how they obtained the result is not part of the evaluation.
+This disagrees with the goals of the artifact evaluation as practiced in the software engineering community; it is also potentially more prone to data leakages.
+Repro-Bench measures the accuracy of the reproducibility scores from one to four compared to the ground truth.
+While artifact evaluation badge (similar to the reproducibility score used by Repro-Bench) is one of the important side-effect of the artifact evaluation process which signals the quality of the artifact, it is not the main goal of the artifact evaluation.
+(2) Due to such problem formulation, they have limited usefulness.
+Contrary to human artifact evaluation which adds confidence that the result of papers are reproducible, exercise of benchmarks do not confer similar confidence.
+Existing benchmarks thus can be used to measure LLM agents' performance on the formulated task, but they can not augment or replace the current artifact evaluation.
+(3) They are limited in terms of domain of computer science (ML, NLP) and programming languages (Python, R, Stata).
+
+To mitigate this problem, we present \benchmark, an automated artifact evaluation benchmark in the domain of software engineering.
+\benchmark has the following advantages:
+(1) It measures LLM agents' ability to generate a code that reproduces the particular claim of the paper; not only the output but the code behind should be submitted.
+\benchmark also distinguishes various fast-path and short-path that LLM agents can take to reproduce the results, which is a crucial distinction not yet highlighted.
+(2) It thus has two applications:
+A script submitted by LLM agents can be used as a partial reproduction scripit that reproduces the particular claim of the paper.
+In the case that the outcome of the submitted script differs from that of the paper, it acts as a credible evidence that paper actually the one with a transcription or rounding error.
+(3) It covers diverse software engineering techniques and programming languages.
+It covers diverse software engineering problems (empirical study, fuzzing, static analysis) and diverse real-world Programming Languages (C, C++, Go, JS, Java, Scala, Rust, Ocaml and many more).
+
+Informed by the existing agents' struggle with the \benchmark, we also develop Artisan, an agentic approach for the automated artifact evalutaion.
+Artisan is equipped with many specialized tools to deal with domain-specific problems of artifact evaluation.
+
+Our evaluation shows that while most LLM agents struggle with \benchmark, Artisan is the most effective LLM agent by producing \artisanpartial{} partial reproduction scripts, outperforming the baseline by \artisanpartialoutperform{}.
+In addition, during our development of \benchmark, we have uncovered \inconsistencies{} inconsistencies between the paper and the artifact, which demonstrates the strength of our approach in benchmark construction.
 
 In summary, this paper contributes the following:
 \begin{itemize}
-    \item SERE-Bench, a novel benchmark that evaluates the capabilities of AI agents to reproduce Software Engineering papers using script submission.
-    \item Artisan, an LLM-based approach which incorporates several tools to aid the reproduction of software engineering research artifacts.
-    \item Empirical evaluation which shows that (1) SERE-Bench is challenging for the current state of the art LLM agents and (2) Artisan effectively addresses the common pitfalls faced by LLM agents.
+    \item \benchmark, a novel benchmark that evaluates the capabilities of AI agents to reproduce Software Engineering papers using script submission.
+    \item Artisan, an LLM-based agent which incorporates several tools to aid the reproduction of software engineering research artifacts.
+    \item Empirical evaluation which shows that (1) \benchmark~is challenging for the current state of the art LLM agents and (2) Artisan effectively addresses the common pitfalls faced by LLM agents.
 \end{itemize}

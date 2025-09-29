@@ -15,18 +15,20 @@
 \usepackage{makecell}
 
 \begin{CCSXML}
-    <ccs2012>
-        <concept>
-            <concept_id>10011007.10011074.10011099.10011102.10011103</concept_id>
-            <concept_desc>Software and its engineering~Software testing and debugging</concept_desc>
-            <concept_significance>500</concept_significance>
-        </concept>
-    </ccs2012>
+<ccs2012>
+   <concept>
+       <concept_id>10011007.10011006.10011073</concept_id>
+       <concept_desc>Software and its engineering~Software maintenance tools</concept_desc>
+       <concept_significance>500</concept_significance>
+       </concept>
+ </ccs2012>
 \end{CCSXML}
-\ccsdesc[500]{Software and its engineering~Software testing and debugging}
+\ccsdesc[500]{Software and its engineering~Software maintenance tools}
 \keywords{Artifact Evaluation, Benchmarks, LLM agents}
 
 \begin{document}
+
+\newcommand\benchmark{SEAE-Bench}
 
 \newcommand\artisanpartial{\textcolor{red}{TODO}}
 \newcommand\artisanpartialoutperform{\textcolor{red}{TODO}}
@@ -34,28 +36,27 @@
 
 \title{Artisan: Automated Artifact Evaluation with Agents}
 \begin{abstract}
-    Artifact evaluation  has proven to be an invaluable resource in ensuring the reproduction of software artifacts accompanying research.
+    Artifact evaluation has beenproven to be an invaluable resource in ensuring the reproduction of software artifacts accompanying research.
     But, artifact evaluation practiced in its current form is notoriously labor-intensive.
     To mitigate this, there has been a recent effort to benchmark the performance of LLM agents on reproducing research results.
     We find several limitations with the existing benchmarks:
     (1) Existing benchmarks largely formulate the problem as an output prediction problem, which undermines its credibility.
     (2) Due to such problem formulation, they have limited usefulness: Contrary to human artifact evaluation which adds confidence that the result of papers are reproducible, exercise of benchmarks do not confer similar confidence.
     (3) They are limited in terms of domain of computer science (ML, NLP) and programming languages (Python, R, Stata).
-    
-    To mitigate this problem, we present SEAE-Bench, an automated artifact evaluation benchmark in the domain of software engineering.
-    SEAE-Bench has the following advantages:
+    To mitigate this problem, we present \benchmark, an automated artifact evaluation benchmark in the domain of software engineering.
+    \benchmark has the following advantages:
     (1) It measures LLM agents' ability to generate a code that reproduces the particular claim of the paper; not only the output but the code behind should be submitted.
     (2) It thus has two applications: A script submitted by LLM agents can be used as a partial reproduction scripit that reproduces the particular claim of the paper. Also, in the case that there is a transcription or rounding error in the paper itself, it acts as a credible evidence that this is so.
     (3) It covers diverse software engineering techniques and programming languages.
-
-    Informed by the existing agents' struggle with the SEAE-Bench, we also develop Artisan, an agentic approach for the automated artifact evalutaion.
+    Informed by the existing agents' struggle with the \benchmark, we also develop Artisan, an agentic approach for the automated artifact evalutaion.
     Artisan is equipped with many specialized tools to deal with domain-specific problems of artifact evaluation.
-    Our evaluation shows that while most LLM agents struggle with SEAE-Bench, Artisan is the most effective LLM agent by producing \artisanpartial{} partial reproduction scripts, outperforming the baseline by \artisanpartialoutperform{}.
-    In addition, during our development of SEAE-Bench, we have uncovered \inconsistencies{} inconsistencies between the paper and the artifact, which demonstrates the strength of our approach in benchmark construction.
+    Our evaluation shows that while most LLM agents struggle with \benchmark, Artisan is the most effective LLM agent by producing \artisanpartial{} partial reproduction scripts, outperforming the baseline by \artisanpartialoutperform{}.
+    In addition, during our development of \benchmark, we have uncovered \inconsistencies{} inconsistencies between the paper and the artifact, which demonstrates the strength of our approach in benchmark construction.
 \end{abstract}
 \maketitle
 
 \input{intro}
+\input{background}
 \input{benchmark}
 \input{approach}
 \input{evaluation}

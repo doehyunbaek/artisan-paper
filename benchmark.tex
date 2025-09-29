@@ -1,46 +1,9 @@
 \section{Benchmark}
 \label{s:benchmark}
 
-\subsection{Overview} 
+\subsection{Overview}
 
-% Requires: \usepackage{booktabs,tabularx}
-\begin{table}[ht]
-\caption{Comparison of prior benchmarks and our benchmark.}
-\centering
-\renewcommand{\arraystretch}{1.25}
-\begin{tabularx}{\linewidth}{lXXXX}
-\toprule
- & \textbf{SUPER} & \textbf{CORE-Bench} & \textbf{ReproBench} & \textbf{SERE-Bench (Ours)} \\
-\midrule
-Domain & ML, NLP & Computer Science, Social Science, Medicine & Social Science & Software Engineering \\
-Language & Python & Python, R & Python, R, Julia, Stata, MATLAB, Julia, Multiple Languages\textsuperscript{1} & Python, R, Julia, C, C++, C\#, Go, JS, TS, Perl, Java, Scala, Rust, Ocaml \\
-
-\#Paper
-& 45 & 90\textsuperscript{2} & 112 & 40 \\
-
-\#Task
-& 45\textsuperscript{3} & 270 & 112 & 162 \\
-
-Time Limit
-& 30 minutes & 45 minutes & 2 hours & 8 hours \\
-
-Input & Pre-processed and curated & Pre-processed and curated & Realistic & Realistic \\
-
-Judging
-& Accuracy of outputs & Accuracy of outputs & Accuracy of reproducibility scores & Script reproducing the exact numbers \\
-
-Discovered inconsistensies & 0 & 0 & 0 & 3+ \\
-\bottomrule
-\end{tabularx}
-
-\vspace{2mm}
-\footnotesize\emph{Note.} \textsuperscript{1} As labeled “Multiple Languages” in the source figure.
-\footnotesize\emph{Note.} \textsuperscript{2} 37 for Computer Science
-\footnotesize\emph{Note.} \textsuperscript{3} In terms of Expert set, They additionally provide 152 masked sets and 604 Auto sets.
-\end{table}
-
-
-The notable difference between our work and previous work is that we are script-based. 
+The notable difference between our work and previous work is that we are script-based.
 Why is it important?
 It is immediately useful. It acts as a standalone script that is push-button runnable which reproduces the particular table.
 It is supported by a concrete execution.
@@ -62,7 +25,7 @@ What’s the argument for this?
 - ess than 8 hours per task (when they mention it): 40
 
 \subsection{Task Selection}
-We want our benchmark to be 
+We want our benchmark to be
 - No cherry-picking
 - Extensive (100~300) but not too expensive and long-running to run.
 - Manual validation is desired but should not take too much time.
@@ -73,11 +36,10 @@ Manually validate all task set (162) to filter out unreproducible and keep the p
 Random sample to smaller size (25 / 50)
 
 I argue for the second option (manually validate all task sets).
-It is not too much work (1 hour per task) to check whether it is sensible to reproduce the table by running artisan. 
+It is not too much work (1 hour per task) to check whether it is sensible to reproduce the table by running artisan.
 We have about 127 tables to manually validate and we can sensibly validate them by the end of the ISSTA submission
 Makes our benchmark higher quality. Less underestimation of agent capability
 If we manually validate all without bias, no cherry-picking.
 Is using artisan as a time-saving measurement already a bias?
 
 Randomly sample and manually validate and time budget with time budget.
-
