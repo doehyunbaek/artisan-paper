@@ -1,45 +1,67 @@
 \section{Benchmark}
 \label{s:benchmark}
 
-\subsection{Overview}
+In this section, we discuss methodologies we use to construct \benchmark.
+We first discuss important requirements we aim our benchmark to have (Section ~\ref{s:requirements}), how we select papers in the benchmark (Section~\ref{s:paper_select}), how we select individual tasks that constitute the benchmark finally (Section~\ref{s:task_select}), how individual task of \benchmark~looks like(. Section~\ref{s:task_example}), and how individual submission is graded (Section~\ref{s:grading}).
 
-The notable difference between our work and previous work is that we are script-based.
-Why is it important?
-It is immediately useful. It acts as a standalone script that is push-button runnable which reproduces the particular table.
-It is supported by a concrete execution.
-What’s a good word to capture this? Realistic? Execution-based? Execution-proof? Evidence-accompanying?
-Comparison with existing work in that they formulate reproduction as a prediction problem but we as a code generation problem?
-It (loosely) implies that this can be used to correct mistakes made in the paper.
-Previous works have not pointed out any errors in the paper.
-We don’t need separate ground truth. Numbers in the paper is the ground truth.
-Less prone to data combination?
-Or it doesn’t matter if it’s contaminated because it’s useful?
-What’s the argument for this?
+\subsection{Requirements}
+\label{s:requirements}
+
+There are two core requirements we have for our benchmark.
+1. The tasks in the benchmark should reflect a real-world problem realistic enough so that good results in the benchmark generalize to the real-world use cases.
+This is motivated by limitations of the previous benchmarks as we view previous benchmarks~\cite{DBLP:conf/emnlp/BoginYG0BCSK24, DBLP:journals/tmlr/SiegelKNSN24, DBLP:conf/acl/HuZLWPK25} not to fully reflect the real-world artifact evaluations practiced in the software engineering communities.
+2. Manual validation is desired. While SWE-Bench~\cite{jimenez2024swebench} has been widely influential as a benchmark of evaluating capabilities of LLMs on real-world software engineering issues, efforts like SWE-Bench Verified~\cite{chowdhury2024swebenchverified} and~\cite{DBLP:journals/corr/abs-2503-15223} has highlighted the important of manual validation not to overestimate or underestimate the capabilities of LLM agents.
+Although both are required for good benchmarks, there are some factors where there is a conflict.
+For instance, task size of benchmarks should be extensive enough to cover diverse use cases but small enough to enable manual validation.
+In addition, task size too large leads to more time and monetary cost for reproduction, which might be too resource-intensive for resource-constrained academic groups~\cite{DBLP:conf/iclr/ChanCJASMSLMPMW25}
 
 \subsection{Paper Selection}
-- Top SE (ICSE, FSE, ASE, ISSTA) with Available and Reusable badges 2024: 114
-- Find artifact url
-- Packaged using Docker: 77
-- Exclude Commercial LLM API use Github token (non-public): 67
-- Exclude GPU use: 46
-- ess than 8 hours per task (when they mention it): 40
+\label{s:paper_select}
+
+\begin{table}[t]
+  \caption{Paper selection criteria}
+  \label{t:paper_select}
+  \centering
+  \begin{tabular}{@{}l r@{}}
+    \toprule
+    Criterion & Count \\
+    \midrule
+    Flagship SE conference papers in 2024 with Available and Reusable badges & 114 \\
+    Packaged using Docker & 76 \\
+    No non-public API use & 68 \\
+    No GPU use & 46 \\
+    Less than eight hours per task & 35 \\
+    Manual reproduction successful & 30 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Guided by these requirements, we select a set of 30 papers which we select through the process outlined in Table~\ref{t:paper_select}.
+(1) We gather 114 papers published in four flagship software engineering conferences (ICSE, FSE, ASE, ISSTA) in 2024 with ACM artifacts available and reusable badges~\cite{acm-artifact-badging-v1_1}.
+We also manually search the web to find the link to the artifacts accompanying the paper.
+This is straightforward in the case of FSE and ISSTA papers which contain a link to the related artifact in ACM Digital Library; in other conferences where this is not the case, we use a popular search engine (Google) with the title of the paper.
+(2) We select 77 papers whose artifacts that are packaged using Docker.
+This is motivated by the fact that Docker and similar virtualization technologies
+have become standard requirements in recent artifact evaluation processes~\cite{icse2024-ae,fse2024-ae,ase2024-ae}.
+To implement this, we do text search with docker (case-insensitive) on markdown and pdf files.
+(3) We select 67 papers that do not make use of non-public APIs.
+This is to ensure reproducible outcome.
+To implement this, we do text search with openai or anthropic as a keyword on Python and Jupyter Notebook files.
+All eight excluded papers make use of OpenAI APIs.
+(4) We select 46 papers which do not make use of GPU or any specialized hardware.
+This is to make benchmark accessible to a wide variety of hardware setups.
+To implement this, we do text search for common GPU keyords (cuda, cudnn, tensorflow, nvidia-smi, --gpus) files with extensions excluding common non-code extensions (.txt, .csv, .json, .log).
+(5) We select 35 papers which do not take eight hours per each task.
+To do the selection, we manually search each paper texts with keyword "hour" to see if there is any explicit mention of timeout setting.
+If there is such mention of such setting over eight hours, we filter them out.
+(6) We manually try to reproduce the major claims of the paper with maximum of eight hours.
+If we fail to set up the environment or reproduce the major claims, we exclude the papers.
 
 \subsection{Task Selection}
-We want our benchmark to be
-- No cherry-picking
-- Extensive (100~300) but not too expensive and long-running to run.
-- Manual validation is desired but should not take too much time.
+\label{s:task_select}
 
-There are few different options:
-Run full task set without modification (162)
-Manually validate all task set (162) to filter out unreproducible and keep the partial table
-Random sample to smaller size (25 / 50)
+\subsection{Example Task}
+\label{s:task_example}
 
-I argue for the second option (manually validate all task sets).
-It is not too much work (1 hour per task) to check whether it is sensible to reproduce the table by running artisan.
-We have about 127 tables to manually validate and we can sensibly validate them by the end of the ISSTA submission
-Makes our benchmark higher quality. Less underestimation of agent capability
-If we manually validate all without bias, no cherry-picking.
-Is using artisan as a time-saving measurement already a bias?
-
-Randomly sample and manually validate and time budget with time budget.
+\subsection{Grading}
+\label{s:grading}

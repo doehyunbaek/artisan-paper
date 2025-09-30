@@ -1,6 +1,5 @@
 \documentclass[acmsmall,screen,review,anonymous]{acmart}
 
-% Minimal, venue-agnostic packages (no project-specific macros)
 \usepackage[capitalise,nameinlink]{cleveref}
 \usepackage[many]{tcolorbox}
 \usepackage{listings}
@@ -13,6 +12,7 @@
 \usepackage{tabularx}
 \usepackage{multirow}
 \usepackage{makecell}
+\usepackage{hyperref}
 
 \begin{CCSXML}
 <ccs2012>
@@ -30,28 +30,30 @@
 
 \newcommand\benchmark{SEAE-Bench}
 
+
+\newcommand\todo[1]{\textcolor{red}{TODO: #1}}
 \newcommand\artisanpartial{\textcolor{red}{TODO}}
 \newcommand\artisanpartialoutperform{\textcolor{red}{TODO}}
 \newcommand\inconsistencies{\textcolor{red}{TODO}}
 
 \title{Artisan: Automated Artifact Evaluation with Agents}
 \begin{abstract}
-    Artifact evaluation has beenproven to be an invaluable resource in ensuring the reproduction of software artifacts accompanying research.
-    But, artifact evaluation practiced in its current form is notoriously labor-intensive.
-    To mitigate this, there has been a recent effort to benchmark the performance of LLM agents on reproducing research results.
-    We find several limitations with the existing benchmarks:
-    (1) Existing benchmarks largely formulate the problem as an output prediction problem, which undermines its credibility.
-    (2) Due to such problem formulation, they have limited usefulness: Contrary to human artifact evaluation which adds confidence that the result of papers are reproducible, exercise of benchmarks do not confer similar confidence.
-    (3) They are limited in terms of domain of computer science (ML, NLP) and programming languages (Python, R, Stata).
-    To mitigate this problem, we present \benchmark, an automated artifact evaluation benchmark in the domain of software engineering.
-    \benchmark has the following advantages:
-    (1) It measures LLM agents' ability to generate a code that reproduces the particular claim of the paper; not only the output but the code behind should be submitted.
-    (2) It thus has two applications: A script submitted by LLM agents can be used as a partial reproduction scripit that reproduces the particular claim of the paper. Also, in the case that there is a transcription or rounding error in the paper itself, it acts as a credible evidence that this is so.
-    (3) It covers diverse software engineering techniques and programming languages.
-    Informed by the existing agents' struggle with the \benchmark, we also develop Artisan, an agentic approach for the automated artifact evalutaion.
-    Artisan is equipped with many specialized tools to deal with domain-specific problems of artifact evaluation.
-    Our evaluation shows that while most LLM agents struggle with \benchmark, Artisan is the most effective LLM agent by producing \artisanpartial{} partial reproduction scripts, outperforming the baseline by \artisanpartialoutperform{}.
-    In addition, during our development of \benchmark, we have uncovered \inconsistencies{} inconsistencies between the paper and the artifact, which demonstrates the strength of our approach in benchmark construction.
+Artifact evaluation has been shown to be a valuablue way to ensure the reproducibility of software artifacts.
+However, in its current form, it remains notoriously labor-intensive.
+To mitigate this, recent work has introduced benchmarks that evaluate LLM agents on automatically reproducing research results.
+We identify several limitations of existing benchmarks:
+(1) They largely frame the task as output prediction.
+(2) Their usefulness is limited: LLM agents successfully predicting the outcome of research does not raise the confidence that the paper is reproducible.
+(3) They cover a narrow domain of computer science and programming languages.
+To address these issues, we present \benchmark, an automated artifact evaluation benchmark for software engineering research.
+\benchmark~has the following characteristics:
+(1) It measures an agent’s ability to generate code that reproduces a paper’s particular claim; not only outputs but also the script used to produce them are graded.
+(2) The submitted script serves as a reproduction script for the particular claim, and when the result of the script does not match with the results of the paper, it acts as a credible evidence of the transcription or rounding errors on the side of the paper.
+(3) It spans diverse software engineering techniques and programming languages.
+Informed by existing LLM agents’ struggles on \benchmark, we develop Artisan, an agentic approach to automated artifact evaluation.
+Artisan includes specialized tools for domain-specific challenges of artifact evaluation.
+Our experiments show that, while most LLM agents struggle on \benchmark, Artisan is effective, producing \artisanpartial{} reproduction scripts and outperforming the baseline by \artisanpartialoutperform{}.
+In addition, during the development of \benchmark, we uncovered \inconsistencies{} inconsistencies between papers and their artifacts, demonstrating the strength of our approach to benchmark construction.
 \end{abstract}
 \maketitle
 
