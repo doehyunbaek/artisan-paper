@@ -2,15 +2,15 @@
 \label{s:benchmark}
 
 In this section, we discuss methodologies we use to construct \benchmark.
-We first discuss important requirements we aim our benchmark to have (Section ~\ref{s:requirements}), how we select papers in the benchmark (Section~\ref{s:paper_select}), how we select individual tasks that constitute the benchmark finally (Section~\ref{s:task_select}), how individual task of \benchmark~looks like(. Section~\ref{s:task_example}), and how individual submission is graded (Section~\ref{s:grading}).
+We first discuss important requirements we aim our benchmark to have (Section ~\ref{s:requirements}), how we select papers in the benchmark (Section~\ref{s:paper_select}), how we select individual tasks that constitute the benchmark finally (Section~\ref{s:task_select}), how individual task of \benchmark~looks like (Section~\ref{s:task_example}), and how individual submission is graded (Section~\ref{s:grading}).
 
 \subsection{Requirements}
 \label{s:requirements}
 
 There are two core requirements we have for our benchmark.
-1. The tasks in the benchmark should reflect a real-world problem realistic enough so that good results in the benchmark generalize to the real-world use cases.
+(1) The tasks in the benchmark should reflect a real-world problem realistic enough so that good results in the benchmark generalize to the real-world use cases.
 This is motivated by limitations of the previous benchmarks as we view previous benchmarks~\cite{DBLP:conf/emnlp/BoginYG0BCSK24, DBLP:journals/tmlr/SiegelKNSN24, DBLP:conf/acl/HuZLWPK25} not to fully reflect the real-world artifact evaluations practiced in the software engineering communities.
-2. Manual validation is desired. While SWE-Bench~\cite{jimenez2024swebench} has been widely influential as a benchmark of evaluating capabilities of LLMs on real-world software engineering issues, efforts like SWE-Bench Verified~\cite{chowdhury2024swebenchverified} and~\cite{DBLP:journals/corr/abs-2503-15223} has highlighted the important of manual validation not to overestimate or underestimate the capabilities of LLM agents.
+(2) Manual validation is desired. While SWE-Bench~\cite{jimenez2024swebench} has been widely influential as a benchmark of evaluating capabilities of LLMs on real-world software engineering issues, efforts like SWE-Bench Verified~\cite{chowdhury2024swebenchverified} and~\cite{DBLP:journals/corr/abs-2503-15223} has highlighted the important of manual validation not to overestimate or underestimate the capabilities of LLM agents.
 Although both are required for good benchmarks, there are some factors where there is a conflict.
 For instance, task size of benchmarks should be extensive enough to cover diverse use cases but small enough to enable manual validation.
 In addition, task size too large leads to more time and monetary cost for reproduction, which might be too resource-intensive for resource-constrained academic groups~\cite{DBLP:conf/iclr/ChanCJASMSLMPMW25}
@@ -46,13 +46,13 @@ have become standard requirements in recent artifact evaluation processes~\cite{
 To implement this, we do text search with docker (case-insensitive) on markdown and pdf files.
 \footnote{\url{https://github.com/doehyunbaek/artisan//blob/bc7e6cd/evaluation/select_papers.py\#L234}}
 (3) We select 67 papers that do not make use of non-public APIs.
-This is to ensure reproducible outcome.
+This is to ensure reproducible benchmark.
 To implement this, we do text search with openai or anthropic as a keyword on Python and Jupyter Notebook files.
 \footnote{\url{https://github.com/doehyunbaek/artisan//blob/bc7e6cd/evaluation/select_papers.py\#L276}}
 All eight excluded papers make use of OpenAI APIs.
 (4) We select 46 papers which do not make use of GPU or any specialized hardware.
 This is to make benchmark accessible to a wide variety of hardware setups.
-To implement this, we do text search for common GPU keyords (cuda, cudnn, tensorflow, nvidia-smi, --gpus) files with extensions excluding common non-code extensions (.txt, .csv, .json, .log).
+To implement this, we do text search for common GPU keyords (cuda, cudnn, tensorflow, nvidia-smi, gpus) files with extensions excluding common non-code extensions (.txt, .csv, .json, .log).
 \footnote{\url{https://github.com/doehyunbaek/artisan//blob/bc7e6cd/evaluation/select_papers.py\#L312}}
 (5) We select 35 papers which do not take eight hours per each task.
 To do the selection, we manually search each paper texts with keyword "hour" to see if there is any explicit mention of timeout setting.
