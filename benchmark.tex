@@ -1,32 +1,33 @@
 \section{Benchmark}
 \label{s:benchmark}
 
-In this section, we discuss methodologies we use to construct \benchmark.
-We first discuss important requirements we aim our benchmark to have (Section ~\ref{s:requirements}), how we select papers in the benchmark (Section~\ref{s:paper_select}), how we select individual tasks that constitute the benchmark finally (Section~\ref{s:task_select}), how individual task of \benchmark~looks like (Section~\ref{s:task_example}), and how individual submission is graded (Section~\ref{s:grading}).
+In this section, we present the methodology used to construct \benchmark.
+We first state the requirements we target (Section~\ref{s:requirements}), then describe paper selection (Section~\ref{s:paper_select}), task selection (Section~\ref{s:task_select}), an example task (Section~\ref{s:task_example}), and our grading scheme (Section~\ref{s:grading}).
 
 \subsection{Requirements}
 \label{s:requirements}
 
-There are two core requirements we have for our benchmark.
-(1) The tasks in the benchmark should reflect a real-world problem realistic enough so that good results in the benchmark generalize to the real-world use cases.
-This is motivated by limitations of the previous benchmarks as we view previous benchmarks~\cite{DBLP:conf/emnlp/BoginYG0BCSK24, DBLP:journals/tmlr/SiegelKNSN24, DBLP:conf/acl/HuZLWPK25} not to fully reflect the real-world artifact evaluations practiced in the software engineering communities.
-(2) Manual validation is desired. While SWE-Bench~\cite{jimenez2024swebench} has been widely influential as a benchmark of evaluating capabilities of LLMs on real-world software engineering issues, efforts like SWE-Bench Verified~\cite{chowdhury2024swebenchverified} and~\cite{DBLP:journals/corr/abs-2503-15223} has highlighted the important of manual validation not to overestimate or underestimate the capabilities of LLM agents.
-Although both are required for good benchmarks, there are some factors where there is a conflict.
-For instance, task size of benchmarks should be extensive enough to cover diverse use cases but small enough to enable manual validation.
-In addition, task size too large leads to more time and monetary cost for reproduction, which might be too resource-intensive for resource-constrained academic groups~\cite{DBLP:conf/iclr/ChanCJASMSLMPMW25}
+We impose two core requirements on \benchmark.
+(1) Tasks should closely reflect real-world artifact evaluation so that performance on the benchmark generalizes to practical use.
+This addresses limitations of prior benchmarks~\cite{DBLP:conf/emnlp/BoginYG0BCSK24,DBLP:journals/tmlr/SiegelKNSN24,DBLP:conf/acl/HuZLWPK25}, which we find do not fully mirror artifact evaluation as practiced in the software engineering community.
+(2) Manual validation is required.
+Although SWE-Bench~\cite{jimenez2024swebench} is influential for evaluating LLMs on real software engineering issues, subsequent efforts such as SWE-Bench Verified~\cite{chowdhury2024swebenchverified} and~\cite{DBLP:journals/corr/abs-2503-15223} highlight the importance of human verification to avoid overestimating or underestimating agent capabilities.
+These requirements introduce trade-offs.
+For example, the task suite must be broad enough to cover diverse use cases yet small enough to permit manual validation.
+Further, very large tasks increase time and monetary cost, which can be prohibitive for resource-constrained academic groups~\cite{DBLP:conf/iclr/ChanCJASMSLMPMW25}.
 
 \subsection{Paper Selection}
 \label{s:paper_select}
 
 \begin{table}[t]
-  \caption{Paper selection criteria}
+  \caption{Paper selection criteria.}
   \label{t:paper_select}
   \centering
   \begin{tabular}{@{}l r@{}}
     \toprule
     Criterion & Count \\
     \midrule
-    Flagship SE conference papers in 2024 with Available and Reusable badges & 114 \\
+    Flagship SE conference papers (2024) with \emph{Available} and \emph{Reusable} badges & 114 \\
     Packaged using Docker & 76 \\
     No non-public API use & 68 \\
     No GPU use & 46 \\
@@ -36,35 +37,33 @@ In addition, task size too large leads to more time and monetary cost for reprod
   \end{tabular}
 \end{table}
 
-Guided by these requirements, we select a set of 30 papers which we select through the process outlined in Table~\ref{t:paper_select}.
-(1) We gather 114 papers published in four flagship software engineering conferences (ICSE, FSE, ASE, ISSTA) in 2024 with ACM artifacts available and reusable badges~\cite{acm-artifact-badging-v1_1}.
-We also manually search the web to find the link to the artifacts accompanying the paper.
-This is straightforward in the case of FSE and ISSTA papers which contain a link to the related artifact in ACM Digital Library; in other conferences where this is not the case, we use a popular search engine (Google) with the title of the paper.
-(2) We select 77 papers whose artifacts that are packaged using Docker.
-This is motivated by the fact that Docker and similar virtualization technologies
-have become standard requirements in recent artifact evaluation processes~\cite{icse2024-ae,fse2024-ae,ase2024-ae}.
-To implement this, we do text search with docker (case-insensitive) on markdown and pdf files.
-\footnote{\url{https://github.com/doehyunbaek/artisan//blob/bc7e6cd/evaluation/select_papers.py\#L234}}
-(3) We select 67 papers that do not make use of non-public APIs.
-This is to ensure reproducible benchmark.
-To implement this, we do text search with openai or anthropic as a keyword on Python and Jupyter Notebook files.
-\footnote{\url{https://github.com/doehyunbaek/artisan//blob/bc7e6cd/evaluation/select_papers.py\#L276}}
-All eight excluded papers make use of OpenAI APIs.
-(4) We select 46 papers which do not make use of GPU or any specialized hardware.
-This is to make benchmark accessible to a wide variety of hardware setups.
-To implement this, we do text search for common GPU keyords (cuda, cudnn, tensorflow, nvidia-smi, gpus) files with extensions excluding common non-code extensions (.txt, .csv, .json, .log).
-\footnote{\url{https://github.com/doehyunbaek/artisan//blob/bc7e6cd/evaluation/select_papers.py\#L312}}
-(5) We select 35 papers which do not take eight hours per each task.
-To do the selection, we manually search each paper texts with keyword "hour" to see if there is any explicit mention of timeout setting.
-If there is such mention of such setting over eight hours, we filter them out.
-(6) We manually try to reproduce the major claims of the paper with maximum of eight hours.
-If we fail to set up the environment or reproduce the major claims, we exclude the papers.
+Guided by these requirements, we curate a set of 30 papers following the process in Table~\ref{t:paper_select}.
+(1) We gather 114 papers from four flagship software engineering venues (ICSE, FSE, ASE, ISSTA) in 2024 with ACM \emph{Artifacts Available} and \emph{Artifacts Evaluated—Reusable} badges~\cite{acm-artifact-badging-v1_1}.
+We then manually locate links to the accompanying artifacts.
+For FSE and ISSTA, the ACM Digital Library lists artifact links; for other venues, we use a web search (e.g., Google) with the paper title.
+(2) We keep 76 papers whose artifacts are packaged using Docker.
+This reflects the fact that Docker and related virtualization technologies are now standard in artifact evaluation~\cite{icse2024-ae,fse2024-ae,ase2024-ae}.
+To implement this, we case-insensitively search Markdown and PDF files for the term ``docker''.\footnote{\url{https://github.com/doehyunbaek/artisan/blob/bc7e6cd/evaluation/select_papers.py\#L234}}
+(3) We exclude papers that rely on non-public APIs to ensure the benchmark is reproducible.
+To implement this, we search Python files and Jupyter notebooks for ``openai'' or ``anthropic''.\footnote{\url{https://github.com/doehyunbaek/artisan/blob/bc7e6cd/evaluation/select_papers.py\#L276}}
+All eight excluded papers use OpenAI APIs.
+(4) We exclude artifacts requiring GPUs or specialized hardware to maintain accessibility across hardware setups.
+We search for common GPU keywords (e.g., \texttt{cuda}, \texttt{cudnn}, \texttt{tensorflow}, \texttt{nvidia-smi}, \texttt{gpus}) while ignoring non-code extensions (e.g., \texttt{.txt}, \texttt{.csv}, \texttt{.json}, \texttt{.log}).\footnote{\url{https://github.com/doehyunbaek/artisan/blob/bc7e6cd/evaluation/select_papers.py\#L312}}
+(5) We require that each task can be completed within eight hours.
+We search the paper text for the keyword ``hour'' and exclude papers that explicitly mention timeouts beyond eight hours.
+(6) Finally, we manually attempt to reproduce each paper’s major claim within an eight-hour budget; failures to set up the environment or reproduce the claim lead to exclusion.
 
 \subsection{Task Selection}
 \label{s:task_select}
 
+% (Your task selection details go here.)
+
 \subsection{Example Task}
 \label{s:task_example}
 
+% (Your example task description goes here.)
+
 \subsection{Grading}
 \label{s:grading}
+
+% (Your grading rubric and procedure go here.)
