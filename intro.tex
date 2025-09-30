@@ -29,10 +29,8 @@ Domain & ML, NLP & CS, SS, Med & SS & SE \\
 \#Inconsistensies Found & 0 & 0 & 0 & 10 \\
 Time Limit
 & 30 minutes & 45 minutes & 2 hours & 8 hours \\
-
 Judging
 & Accuracy of outputs & Accuracy of outputs & Accuracy of reproducibility scores & \#Script that reproduces the claim \\
-
 \bottomrule
 \end{tabularx}
 
@@ -44,7 +42,7 @@ Judging
 To mitigate this, there has been a recent effort to benchmark the performance of LLM agents on reproducing research results.
 Table~\ref{t:benchmark_comparison} summarizes these recent efforts.
 SUPER~\cite{DBLP:conf/emnlp/BoginYG0BCSK24} is a benchmark that evaluates the capability of LLM agents in reproducing results from ML and NLP papers.
-CORE-Bench~\cite{DBLP:journals/tmlr/SiegelKNSN24}, while having similar overall goal, differs by targeting broader domain (Social Science, Medicine) and including vision-language tasks.
+CORE-Bench~\cite{DBLP:journals/tmlr/SiegelKNSN24}, while having similar overall goal, differs by incorporating broader domain (Social Science, Medicine) and including vision-language tasks.
 Repro-Bench~\cite{DBLP:conf/acl/HuZLWPK25} focuses on reproduction of social science research, and makes the problem setup more realistic.
 
 However, we find several limitations with the existing benchmarks:
@@ -66,11 +64,26 @@ It also distinguishes fast-path and short-path that LLM agents can take to repro
 (2) \benchmark~thus has two applications:
 A script submitted by LLM agents can be used as a reproduction scripit that reproduces the particular claim of the paper.
 In the case that the outcome of the submitted script differs from that of the paper, it acts as a credible evidence that paper actually is the one with a transcription or rounding error.
-(3) \benchmark~covers diverse software engineering techniques and programming languages.
-It covers diverse software engineering problems (empirical study, fuzzing, static analysis) and diverse real-world Programming Languages (C, C++, Go, JS, Java, Scala, Rust, Ocaml, etc.).
+(3) \benchmark~covers diverse software engineering techniques (empirical study, fuzzing, static analysis) and programming languages (C, C++, Go, JS, Java, Scala, Rust, Ocaml, etc.).
+
+\begin{table}[t]
+\caption{Tools that accompany Artisan}
+\label{t:artisan_tools}
+\centering
+\renewcommand{\arraystretch}{1.25}
+\begin{tabularx}{\linewidth}{lXXXX}
+\toprule
+Tool  & Description \\
+\midrule
+Get  & Fetches artifact from the url. Acts as a unified interface to diverse artifact repositories (Zenodo, Figshare, Github) \\
+Replay & Replays the commands executed until now. \\
+Format & Formats exeuction log into a template expected by the grading. \\
+\bottomrule
+\end{tabularx}
+\end{table}
 
 Informed by the existing agents' struggle with the \benchmark, we also develop Artisan, an agentic approach for the automated artifact evalutaion.
-Artisan is equipped with many specialized tools to deal with domain-specific problems of artifact evaluation.
+Artisan is equipped with many specialized tools to deal with domain-specific problems of artifact evaluation, shown in Table~\ref{t:artisan_tools}
 \todo{Many more technical novelty for the side of Artisan?}
 
 Our evaluation shows that while most LLM agents struggle with \benchmark, Artisan is the most effective LLM agent by producing \artisanpartial{} reproduction scripts, outperforming the baseline by \artisanpartialoutperform{}.
