@@ -44,13 +44,16 @@ This is straightforward in the case of FSE and ISSTA papers which contain a link
 This is motivated by the fact that Docker and similar virtualization technologies
 have become standard requirements in recent artifact evaluation processes~\cite{icse2024-ae,fse2024-ae,ase2024-ae}.
 To implement this, we do text search with docker (case-insensitive) on markdown and pdf files.
+\footnote{\url{https://github.com/doehyunbaek/artisan//blob/bc7e6cd/evaluation/select_papers.py\#L234}}
 (3) We select 67 papers that do not make use of non-public APIs.
 This is to ensure reproducible outcome.
 To implement this, we do text search with openai or anthropic as a keyword on Python and Jupyter Notebook files.
+\footnote{\url{https://github.com/doehyunbaek/artisan//blob/bc7e6cd/evaluation/select_papers.py\#L276}}
 All eight excluded papers make use of OpenAI APIs.
 (4) We select 46 papers which do not make use of GPU or any specialized hardware.
 This is to make benchmark accessible to a wide variety of hardware setups.
 To implement this, we do text search for common GPU keyords (cuda, cudnn, tensorflow, nvidia-smi, --gpus) files with extensions excluding common non-code extensions (.txt, .csv, .json, .log).
+\footnote{\url{https://github.com/doehyunbaek/artisan//blob/bc7e6cd/evaluation/select_papers.py\#L312}}
 (5) We select 35 papers which do not take eight hours per each task.
 To do the selection, we manually search each paper texts with keyword "hour" to see if there is any explicit mention of timeout setting.
 If there is such mention of such setting over eight hours, we filter them out.
