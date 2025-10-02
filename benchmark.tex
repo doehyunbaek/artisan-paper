@@ -37,7 +37,7 @@ Further, very large tasks increase time and monetary cost, which can be prohibit
   \end{tabular}
 \end{table}
 
-Guided by these requirements, we curate a set of 30 papers following the process in Table~\ref{t:paper_select}.
+Guided by these requirements, we curate a set of \papersetsize~papers following the process in Table~\ref{t:paper_select}.
 (1) We gather 114 papers from four flagship software engineering venues (ICSE, FSE, ASE, ISSTA) in 2024 with ACM \emph{Artifacts Available} and \emph{Artifacts Evaluated—Reusable} badges~\cite{acm-artifact-badging-v1_1}.
 We then manually locate links to the accompanying artifacts.
 For FSE and ISSTA, the ACM Digital Library lists artifact links; for other venues, we use a web search (e.g., Google) with the paper title.
@@ -56,7 +56,17 @@ We search the paper text for the keyword ``hour'' and exclude papers that explic
 \subsection{Task Selection}
 \label{s:task_select}
 
-% (Your task selection details go here.)
+From \papersetsize~papers selected, we curate \tasksetsize~tasks that is given to LLM agents as a single task instance.
+We first give general criteria (Section~\ref{s:task_selection_criteria}), and give two notable distinctions about inconsistensies between paper and artifacts (Section~\ref{s:inconsistencies}) and slow path and fast path (Section~\ref{s:slow_and_fast}).
+
+\subsubsection{Task Selection criteria}
+\label{s:task_selection_criteria}
+
+\subsubsection{Inconsistensies Between Paper and Artifacts}
+\label{s:inconsistencies}
+
+\subsubsection{Slow Path and Fast Path}
+\label{s:slow_and_fast}
 
 \subsection{Example Task}
 \label{s:task_example}
