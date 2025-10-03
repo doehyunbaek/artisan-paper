@@ -34,13 +34,14 @@
 \newcommand\goodscript{particular reproduction script}
 \newcommand\newbug{paper-artifact inconsistencies}
 \newcommand\fastpath{fast-path}
+\newcommand\slowpath{slow-path}
 
 \newcommand\papersetsize{30}
 \newcommand\tasksetsize{162}
 
 \newcommand\todo[1]{\textcolor{red}{TODO: #1}}
-\newcommand\artisanpartial{\textcolor{red}{TODO}}
-\newcommand\artisanpartialoutperform{\textcolor{red}{TODO}}
+\newcommand\evalgoodscript{\textcolor{red}{TODO}}
+\newcommand\evalgoodscriptoutperform{\textcolor{red}{TODO}}
 \newcommand\nondetsize{\textcolor{red}{TODO}}
 \newcommand\inconsistenciessize{\textcolor{red}{TODO}}
 \newcommand\fastpathsize{\textcolor{red}{TODO}}
@@ -54,15 +55,15 @@ We identify several limitations of existing benchmarks:
 (1) They largely frame the task as output prediction.
 (2) Their usefulness is limited: LLM agents successfully predicting the outcome of research does not raise the confidence that the paper is reproducible.
 (3) They cover a narrow domain of software engineering techniques and programming languages.
-To address these issues, we present \benchmark, an automated artifact evaluation benchmark for software engineering research.
+To address these issues, we present \benchmark, an automated artifact evaluation benchmark based on code generation.
 \benchmark~has the following characteristics:
-(1) It measures an agent’s ability to generate code that reproduces a paper’s particular claim; not only outputs but also the script used to produce them are graded.
-(2) The submitted script serves as a reproduction script for the particular claim, and when the result of the script does not match with the results of the paper, it acts as a credible evidence of the transcription or rounding errors on the side of the paper.
-(3) It spans diverse software engineering techniques and programming languages.
+(1) It measures an agent’s ability to generate \emph{\goodscript{}}, a script that reproduces a paper’s particular claim; not only outputs but also the script used to produce them are graded.
+(2) It uncovers \emph{\newbug{}}, where the result of \goodscript{} does not match with the results of the paper, the presence of \goodscript{} acts as a credible evidence of the transcription or rounding errors on the side of the paper.
+(3) It enables distinctions of \emph{\fastpath{}}, a reproduction using pre-computed values, and \emph{\slowpath{}}, a reproduction from scratch.
 Informed by existing LLM agents’ struggles on \benchmark, we develop Artisan, an agentic approach to automated artifact evaluation.
 Artisan includes specialized tools for domain-specific challenges of artifact evaluation.
-Our experiments show that, while most LLM agents struggle on \benchmark, Artisan is effective, producing \artisanpartial{} reproduction scripts and outperforming the baseline by \artisanpartialoutperform{}.
-In addition, during the development of \benchmark, we uncovered \inconsistenciessize~inconsistencies between papers and their artifacts, \nondetsize~non-deterministic behaviors of the artifact which is not explicitly documented, \fastpathsize~fast paths that artifacts provide, demonstrating the strength of our approach to benchmark construction.
+Our experiments show that, while most LLM agents struggle on \benchmark, Artisan is effective, producing \evalgoodscript{} \goodscript{}~and outperforming the baseline by \evalgoodscriptoutperform{}.
+In addition, during the development of \benchmark, we uncovered \inconsistenciessize~\newbug{}, \fastpathsize~\fastpath{}~that artifacts provide, and \nondetsize~non-deterministic behaviors of the artifact which is not explicitly documented, demonstrating the strength of our approach to benchmark construction.
 \end{abstract}
 \maketitle
 
