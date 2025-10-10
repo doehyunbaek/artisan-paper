@@ -24,7 +24,7 @@ Domain & ML, NLP & CS, SS, Med & SS & SE \\
 Programming Languages & Python & Python, R & Stata, R, MATLAB, Julia, Python & Python, Java, Rust, Ocaml, Scala, Bash, C \\
 \#Papers & 45 & 90\textsuperscript{1} & 112 & \papersetsize \\
 \#Tasks & 45\textsuperscript{2} & 270 & 112 & \tablesetsize \\
-\#Inconsistencies Found & 0 & 0 & 0 & 10 \\
+\#Inconsistencies Found & 0 & 0 & 0 & \inconsistenciessize \\
 Time Limit & 30 minutes & 45 minutes & 2 hours & 8 hours \\
 Judging & Accuracy of outputs & Accuracy of outputs & Accuracy of reproducibility scores & Submitted script reproduces the claim \\
 \bottomrule
@@ -32,8 +32,9 @@ Judging & Accuracy of outputs & Accuracy of outputs & Accuracy of reproducibilit
 
 
 \vspace{2mm}
-\footnotesize \textsuperscript{1}\;37 in CS.
+\footnotesize \textsuperscript{1}\;37 for CS.
 \footnotesize \textsuperscript{2}\;Expert set. SUPER additionally provides 152 Masked sets and 604 Auto sets.
+\vspace{-2mm}
 \end{table}
 
 To mitigate these costs, recent work benchmarks the performance of LLM agents on reproducing research results.
@@ -66,7 +67,7 @@ Motivated by agents’ struggles on \benchmark, we also develop \emph{Artisan}, 
 Artisan includes specialized tools for domain-specific challenges in artifact evaluation (Table~\ref{t:artisan_tools}).
 \todo{Add technical novelties of Artisan.}
 
-Our evaluation shows that while most LLM agents struggle on \benchmark, Artisan is the most effective, producing \evalgoodscript{} reproduction scripts and outperforming the baseline by \evalgoodscriptoutperform{}.
+Our evaluation shows that while most LLM agents struggle on \benchmark, Artisan is the most effective, producing \particularscriptsize{} reproduction scripts and outperforming the baseline by \particularscriptsizeoutperform{}.
 During the construction of \benchmark, we also uncovered \inconsistenciessize~inconsistencies between papers and artifacts and \fastpathsize~fast paths that artifacts provide, demonstrating the strength of our approach to benchmark construction.
 
 In summary, this paper contributes the following:
