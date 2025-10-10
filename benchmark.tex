@@ -28,11 +28,11 @@ Further, very large tasks increase time and monetary cost, which can be prohibit
     Criterion & Count \\
     \midrule
     Flagship SE conference papers (2024) with \emph{Available} and \emph{Reusable} badges & 114 \\
-    Packaged using Docker & 73 \\
+    Packaged using Docker & 72 \\
     No non-public API use & 65 \\
-    No GPU use & 45 \\
-    Less than eight hours per task & 34 \\
-    Manual reproduction successful & 27 \\
+    No GPU use & 46 \\
+    Less than eight hours per task & 35 \\
+    Manual reproduction successful & \papersetsize \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -53,10 +53,50 @@ We search for common GPU keywords (e.g., \texttt{cuda}, \texttt{cudnn}, \texttt{
 We search the paper text for the keyword ``hour'' and exclude papers that explicitly mention timeouts beyond eight hours.
 (6) Finally, we manually attempt to reproduce each paper’s major claim within an eight-hour budget; failures to set up the environment or reproduce the claim lead to exclusion.
 
+\begin{table}[t]
+  \centering
+  \begin{minipage}[t]{0.48\textwidth}
+    \centering
+    \caption{Software engineering techniques covered by our paper selection.}
+    \label{t:topics}
+    \input{tables/topic_distribution}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.48\textwidth}
+    \centering
+    \caption{Programming languages in the selected papers.}
+    \label{t:languages}
+    \input{tables/language_distribution}
+  \end{minipage}
+\end{table}
+
+Table~\ref{t:topics} shows the distribution of software engineering techniques covered by our paper selection.
+Overall, there is a diverse selection of software engineering techniques.
+One notable exception is a possible under-representation of AI4SE and SE4AI techniques.
+This is mainly due to our exclusion of papers using non-public APIs and GPUs.
+Still, there is one paper~\cite{DBLP:conf/kbse/LeeJL24} which makes use of classical machine learning technique (Random forest and XGBoost) which does not make use of either non-public APIs and GPUs.
+Table~\ref{t:languages} shows the distribution of programming languages covered by our paper seleciton.
+Overall, Python is the most prevalent, comprising 57\% of the papers.
+However, there is a sizable representation of other languages, notably Java, Rust, Ocaml, Scala, C, and even Bash, which were not covered in the previous benchmarks~~\cite{DBLP:conf/emnlp/BoginYG0BCSK24, DBLP:journals/tmlr/SiegelKNSN24, DBLP:conf/acl/HuZLWPK25}.
+
 \subsection{Task Selection}
 \label{s:task_select}
 
-From \papersetsize~papers selected, we curate \tasksetsize~tasks that is given to LLM agents as a single task instance.
+\begin{table}[t]
+  \caption{Task selection criteria.}
+  \label{t:task_select}
+  \centering
+  \begin{tabular}{@{}l r@{}}
+    \toprule
+    Criterion & Count \\
+    \midrule
+    Total number of tables & 115 \\
+    No non-result tables & 101 \\
+    Manual reproduction successful & \tablesetsize \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+From \papersetsize~papers selected, we curate \tablesetsize~tasks that is given to LLM agents as a single task instance.
 We first give general criteria (Section~\ref{s:task_selection_criteria}), and give two notable distinctions about inconsistensies between paper and artifacts (Section~\ref{s:inconsistencies}) and slow path and fast path (Section~\ref{s:slow_and_fast}).
 
 \subsubsection{Task Selection criteria}
