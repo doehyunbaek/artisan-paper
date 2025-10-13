@@ -51,7 +51,9 @@ All eight excluded papers use OpenAI APIs.
 We search for common GPU keywords (e.g., \texttt{cuda}, \texttt{cudnn}, \texttt{tensorflow}, \texttt{nvidia-smi}, \texttt{gpus}) while ignoring non-code extensions (e.g., \texttt{.txt}, \texttt{.csv}, \texttt{.json}, \texttt{.log}).\footnote{\url{https://github.com/doehyunbaek/artisan/blob/bc7e6cd/evaluation/select_papers.py\#L312}}
 (5) We require that each task can be completed within eight hours.
 We search the paper text for the keyword ``hour'' and exclude papers that explicitly mention timeouts beyond eight hours.
+Out of eleven papers excluded, seven papers use 24 hours timeout, three papers use 12 hours timeout, and one paper uses 125 hour timeout.
 (6) Finally, we manually attempt to reproduce each paper’s major claim within an eight-hour budget; failures to set up the environment or reproduce the claim lead to exclusion.
+Out of seven papers excluded, two are excluded as most of the evaluation dataset is missing, two are excluded as raw data is missing, two are excluded as script to generate results from raw data are missing, and one is excluded as docker image mentioned in the artifact is no longer accessible.
 
 \begin{table}[t]
   \centering
