@@ -19,7 +19,7 @@ Given the significant manual effort, it is unclear whether the benefits to indiv
 \renewcommand{\arraystretch}{1.25}
 \begin{tabularx}{\linewidth}{lXXXX}
 \toprule
- & \textbf{SUPER}~\cite{DBLP:conf/emnlp/BoginYG0BCSK24} & \textbf{CORE-Bench}~\cite{DBLP:journals/tmlr/SiegelKNSN24} & \textbf{Repro-Bench}~\cite{DBLP:conf/acl/HuZLWPK25} & \textbf{\benchmark~(Ours)} \\
+ & \textbf{SUPER}~\cite{SUPER} & \textbf{CORE-Bench}~\cite{DBLP:journals/tmlr/SiegelKNSN24} & \textbf{Repro-Bench}~\cite{DBLP:conf/acl/HuZLWPK25} & \textbf{\benchmark~(Ours)} \\
 \midrule
 Domain & ML, NLP & CS, SS, Med & SS & SE \\
 Programming Languages & Python & Python, R & Stata, R, MATLAB, Julia, Python & Python, Java, Rust, Ocaml, Scala, C, Bash \\
@@ -27,7 +27,7 @@ Programming Languages & Python & Python, R & Stata, R, MATLAB, Julia, Python & P
 \#Tasks & 45\textsuperscript{2} & 90\textsuperscript{3} & 112 & \tablesetsize \\
 \#Inconsistencies Found & 0 & 0 & 0 & \inconsistenciessize \\
 \#Fast-path Found & 0 & 0 & 0 & \fastpathsize \\
-Time Limit & 30 minutes & 45 minutes & 2 hours & 8 hours \\
+Time Limit & 10 minutes & 45 minutes & 2 hours & 8 hours \\
 Judging & Accuracy of outputs & Accuracy of outputs & Accuracy of reproducibility scores & Submitted script reproduces the claim \\
 \bottomrule
 \end{tabularx}
@@ -42,7 +42,7 @@ Judging & Accuracy of outputs & Accuracy of outputs & Accuracy of reproducibilit
 
 To mitigate these costs, recent work benchmarks the performance of LLM agents on reproducing research results.
 Table~\ref{t:benchmark_comparison} summarizes these efforts.
-SUPER~\cite{DBLP:conf/emnlp/BoginYG0BCSK24} evaluates the ability of LLM agents to reproduce results from ML and NLP papers.
+SUPER~\cite{SUPER} evaluates the ability of LLM agents to reproduce results from ML and NLP research repositories.
 CORE-Bench~\cite{DBLP:journals/tmlr/SiegelKNSN24} has a similar overall goal but covers broader domains (social science, medicine) and includes vision-language tasks.
 Repro-Bench~\cite{DBLP:conf/acl/HuZLWPK25} focuses on reproducing social science research and adopts a more realistic problem setup.
 
@@ -56,6 +56,10 @@ While an ACM artifacts badge (akin to a reproducibility score) is a valuable \em
 Unlike human artifact evaluation, which increases confidence that a paper’s results are reproducible, running these benchmarks does not confer comparable confidence.
 They can measure agent performance on the posed tasks but cannot augment or replace current artifact evaluation.
 (3) Coverage is limited in both software engineering techniques (ML / NLP) and programming languages (Python, R, and Stata).
+
+% One limitation we identify is that in the previous benchmark, artifact (research repositories according to the previous work) are treated in isolation, neglecting its relationship with the research paper.
+% For example, SUPER~\cite{SUPER} start from the research repositories to construct the tasks and not consult the research paper.
+% This measures consistency of the reproduction of the research repositories with some reference solution, but the reproducibility of the findings of the research paper itself is neglected.
 
 To address these limitations, we present \benchmark, an automated artifact evaluation benchmark for software engineering.
 \benchmark~has the following characteristics:
