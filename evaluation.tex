@@ -1,6 +1,50 @@
 \section{Evaluation}
 \label{s:evaluation}
 
+To evaluate our approach, we answer the following research questions:
+
+\begin{itemize}[labelindent=\parindent,leftmargin=*]
+\item \textbf{RQ1. Effectiveness}:
+How effective is \approach{} at generating reproduction scripts for the tables of software engineering research papers?
+\item \textbf{RQ2. Efficiency}:
+How efficient is \approach in terms of time and monetary cost?
+\item \textbf{RQ3. Ablation Study}:
+What is the impact of different tools in different configuartions?
+\end{itemize}
+
+\subsection{Experimental Setup}
+
+\subsubsection{Datasets}
+
+We use SEA-Bench introduced in Section~\ref{s:benchmark} to evaluate our approach and the baselines.
+
+\subsubsection{Implementation and Model}
+
+We build~\approach~on top of mini-swe-agent\cite{minisweagent,sweagent}.
+To implement the tools, we use Python 3.12.10.
+We use GPT-5-mini-2025-08-07 as our model.
+
+\subsubsection{Baslines}
+
+As our baselines, we select mini-swe-agent\cite{minisweagent} and SWE-agent\cite{sweagent}.
+We choose mini-swe-agent as one of our baselines for the two reasons:
+(1) \approach~is built on top of mini-swe-agent. Thus, comparing \approach with mini-swe-agent allows thorough empirical study of the contributions of~\approach.
+(2) mini-swe-agent has competitive performance (70.6\% resolved at SWE-Bench Verified with Claude 4.5 Sonnet, compared to 78.8\% which is the top score at the current leaderboard), despite being very simple (131 LOC in terms of core).
+We choose SWE-agent as it is the established state-of-the-art approach for the general software engineering tasks.
+We use the same GPT-5-mini-2025-08-07 for models of mini-swe-agent and SWE-agent.
+
+\subsubsection{System Prompt Used}
+
+To implement Artisan, we use system prompt developed for the purpose of artifact evalution~\footnote{https://github.com/doehyunbaek/artisan//blob/9b13d07f/src/artisan/mini.py\#L22-\#L71}.
+This is combined with the user prompt described before at~\ref{s:user-prompt} to constitue an input to the agent.
+For other baselines, we use default system prompt for SWE-Agent\footnote{https://github.com/SWE-agent/SWE-agent/blob/8089c8ba/config/default.yaml\#L7} for SWE-Agent, and default system prompt for mini-swe-agent\footnote{https://github.com/SWE-agent/mini-swe-agent/blob/eeaf79b4/src/minisweagent/config/default.yaml\#L2-\#L17} for mini-swe-agent.
+
+\subsubsection{Metrics}
+
+To evaluate the effectiveness, we use Best-of-N metric with N set to 10.
+That is, we allow each agent to attempt to reproduce the table N times sequentially, terminating early if one of the attempt leads to successful reproduction.
+To evaluate efficiency, we report total time and LLM token cost spent per task.
+
 \begin{table}[t]
   \caption{Effectiveness of Artisan on the \benchmark}
   \label{t:big_table}

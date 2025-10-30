@@ -124,4 +124,9 @@ We first give general criteria (Section~\ref{s:task_selection_criteria}), and gi
 Unlike previous work~~\cite{SUPER,DBLP:journals/tmlr/SiegelKNSN24} we allow submission and getting the feedback whle agent is running.
 This helps improve the effectiveness of the agent, as shown in ~\ref{s:eval_judging}
 
-% (Your grading rubric and procedure go here.)
+\subsection{User Prompt for Task Definition}
+\label{s:user-prompt}
+
+To ensure the fairness of comparison with agents, we enforce a usage of single user prompt for task definition across all the agents.
+Each agent can do the prompt tuning in their system prompt.
+The user prompt for task definition is listed at here~\footnote{https://github.com/doehyunbaek/artisan//blob/9b13d07f/src/artisan/mini.py\#L75-\#L140}.
