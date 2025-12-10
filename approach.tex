@@ -1,36 +1,157 @@
 \section{Approach}
 \label{s:approach}
 
+We first give a brief overview of the approach (Section ~\ref{s:overview}).
+Then, we give a detailed explanation of the three tools that we provide to the agent (Section \ref{s:get}, \ref{s:format}, \ref{s:judge})
+
 \subsection{Overview}
 \label{s:overview}
+
+\begin{figure}[t]
+  \centering
+  \begin{minted}{bash}
+#!/usr/bin/bash
+# Section 1: Artifact download
+artisan get {{ artifact_url }}
+# Section 2: Reproduction commands (populate from reviewed steps)
+<Commands to reproduce the table>
+# Section 3: Formatting and submission block
+artisan format --expected /workspace/expected.md --repro /workspace/repro.txt
+  \end{minted}
+  \caption{Script template provided to the agent to guide the code generation.}
+  \Description{Script template provided to the agent to guide the code generation.}
+  \label{f:script_template}
+\end{figure}
+
+\begin{figure}[t]
+  \centering
+  \begin{minted}{bash}
+cat > /workspace/repro_{{ artifact_name }}_table_{{ table_index }}.sh <<'EOF'
+{{ script_template }}
+EOF
+artisan judge /workspace/repro_{{ artifact_name }}_table_{{ table_index }}.sh
+  \end{minted}
+  \caption{Comand template provided to the agent to guide the script submission.}
+  \Description{Comand template provided to the agent to guide the script submission.}
+  \label{f:command_template}
+\end{figure}
+
+As \approach~tries to automate the artifact evaluation by tasking LLM agents to generate~\goodscript{}, we provide a script template that agents should follow for effective research reproduction.
+Figure \ref{f:script_template} shows a script template we provide.
+First, agents should fetch the artifact from different artifact repositories.
+We provide Get tool (Section~\ref{s:get}) to provide a unified interface to the artifact repositories.
+Then, the agent autonomously exercises the fetched artifact to reproduce the research results.
+As the commands needed to reproduce the results vary from artifact to artifact, we ask the agent to review the commands it has executed to fill in the necessary commands.
+Lastly, the agent has to analyze and format the execution logs into the expected format.
+To support this, we provide Format tool (Section~\ref{s:format}), which is an LLM-based formatter that takes an expected table and execution log as an input and output a formatted table.
+
+To guide the agent in reproducing the research result, we allow agent to get a feedback on the \goodscript~they have generated with Judge tool (Section~\ref{s:judge}).
+Figure \ref{f:command_template} shows a command template we provide to the agent.
+By writing the generated script to a file and calling a Judge tool, the agent can get feedback whether (1) the output of the generated code matches the actual table, and (2) the way~\goodscript~generates the output is appropriate.
+The agent can incorporate the feedback if any of the two conditions are not met, guiding the reproduction process.
 
 \subsection{\emph{Get} tool: Fetching Research Artifacts}
 \label{s:get}
 
-\subsection{\emph{Format} tool: Formatting Execution Log into Results}
+There currently exists multiple different repository providers that researchers use to archive their artifacts, including Zenodo, Figshare, and GitHub.
+Without the specizlied tool, LLM agent can still retrive the artifact from the given tool by utilizing CLI tools like curl to retrieve the artifact.
+However, we found that the agent stumbles on interacting with the repository API initially.
+In addition, complex probing of the repository API makes the code generation task more complicated, leading to more errors.
+
+To mitigate this, we implement Get tool, which agent can invoke with just the url to fetch the research artifact.
+It handles the repository-specific logic silently, downloads the research artifact, extracts the research artifact, and locate the README file of the artifact.
+It also supports caching of the artifact that has been already fetched before.
+While simple, we found that this is an effective strategy that helps the agent in initial fetching and also generating~\goodscript.
+
+\subsection{\emph{Format} tool: Formatting Execution Outputs into Results}
 \label{s:format}
 
-\subsection{\emph{Submit} and \emph{Judge} tool: Evaluating Reproduction Attempts}
-\label{s:submit}
+\begin{figure}[t]
+  \centering
+  \begin{minted}{markdown}
+You format results into GitHub-flavored Markdown tables.
 
+CRITICAL TEMPLATE RULE:
+Return a table that is IDENTICAL to the provided expected table except that
+every placeholder question mark (?) is replaced by exactly one decimal digit
+(0-9). One ? => one digit. A pattern like "??.??" means two digits, a dot,
+two digits. A pattern like "?,???,???" means digits in those exact slots with
+commas preserved. Do NOT add, remove, or move pipes |, spaces, commas, dots,
+percent signs %, header separators, or rows. Do NOT alter any cell that
+contains no ? characters. Preserve capitalization and ordering exactly.
 
-% \begin{table}[t]
-% \caption{Tools that accompany Artisan.}
-% \label{t:artisan_tools}
-% \centering
-% \renewcommand{\arraystretch}{1.25}
-% \begin{tabularx}{\linewidth}{lX}
-% \toprule
-% \textbf{Tool} & \textbf{Description} \\
-% \midrule
-% \texttt{Get} & Fetches an artifact from a URL; provides a unified interface to diverse repositories (Zenodo, Figshare, GitHub). \\
-% \texttt{Replay} & Replays all commands executed so far. \\
-% \texttt{Format} & Formats the execution log into the template expected by the grader. \\
-% \bottomrule
-% \end{tabularx}
-% \end{table}
+DATA FILLING:
+Derive each replaced digit sequence from ONLY the reproduction text.
+  \end{minted}
+  \caption{Part of the system prompt used to implement the Format tool}
+  \Description{Part of the system prompt used to implement the Format tool}
+  \label{f:format}
+\end{figure}
+
+\begin{figure}[t]
+  \centering
+  % First Subfigure
+  \begin{subfigure}[t]{0.48\textwidth}
+    \begin{minted}[fontsize=\scriptsize, breaklines=true]{bash}
+**Table 3: Evaluation Results**
+
+| Project Name | Summary   | Annotations | Warnings |
+| ---------------------    |             | -------- |
+| MarginSwap   | (omitted) |           ? |        ? |
+| PoolTogehter | (omitted) |           ? |        ? |
+| Tracer       | (omitted) |           ? |        ? |
+| Yield Micro  | (omitted) |           ? |        ? |
+
+    \end{minted}
+    \caption{Part of the expected table provided as input.}
+    \Description{Part of the expected table provided as input.}
+    \label{f:format_input_table}
+  \end{subfigure}
+  \hfill % Adds space between the figures
+  % Second Subfigure
+  \begin{subfigure}[t]{0.48\textwidth}
+    \begin{minted}[fontsize=\scriptsize, breaklines=true]{bash}
+Switched global version to 0.8.3
+'solc --version' running
+Reference: ScType
+Error with TMP_57 in function updateHourlyBondAmount
+Error with: TMP_57 in function updateHourlyBondAmount
+Annotation count: 6
+Function count: 20
+Executing Group 1
+[*] Tested 1 warning for MarginSwap
+    \end{minted}
+    \caption{Part of the execution output provided as input.}
+    \Description{Part of the execution output provided as input.}
+    \label{f:format_input_log}
+  \end{subfigure}
+  \caption{Input given to the Format tool.}
+  \label{f:format_input}
+\end{figure}
+
+Even after an agent has successfully reproduced research results by running a series of command, the outputs of the commands are usually not exactly the same as in what is presented in the paper.
+Some artifacts also provide scripts that processes these execution outputs into one that is used in the paper, but many artifacts do not provide scripts.
+Of course, an LLM agent can try to write the missing processing script itself, but we found that it struggles to write such scripts in a lot of cases.
+In many cases, an LLM successfully ran commands necessary to reproduce the research results, but could not get correct score from the judge as the formatting of the execution outputs was inadequate.
+
+To address this, we implement Format tool, which is an which is an LLM-based formatter that takes an expected table and execution log as an input and output a formatted table.
+Figure \ref{f:format} shows a part of the system prompt that we use to implement the Format tool and Figure \ref{f:format_input} shows an example input that is passed to a Format tool.
+You can see that while table expects the research result in a tabular format (Figure \ref{f:format_input_table}), the output of the execution is just a log file (Figure \ref{f:format_input_log}), and there is not much structure.
+In addition, the log file is 1,103 lines in total.
+Format tool passes the input expected table and execution output with some few-shot examples to the LLM, and outputs the tables with expected values filled-in.
+Writing a log parsing script to handle this case would be doable but not so easy.
+
+\subsection{\emph{Judge} tool: Evaluating Reproduction Attempts}
+\label{s:judge}
 
 \section{Implementation}
 \label{s:implementation}
+
+\paragraph{Agent Framework and LLM Model Choice}
+
+We use mini-swe-agent~\cite{minisweagent}, version 1.17.1 to build \approach.
+Although mini-swe-agent supports any models supported by LiteLLM~\cite{litellm}, we mainly experimented with GPT-5.1 for our day-to-day experimentation.
+
+\paragraph{Implementing Judging with Submit tool}
 
 \paragraph{Serving Docker Images Locally}
