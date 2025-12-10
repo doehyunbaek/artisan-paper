@@ -24,7 +24,7 @@ Domain & ML, NLP & CS, SS, Med & SS & SE \\
 Programming Languages & Python & Python, R & Stata, R, MATLAB, Julia, Python & Python, Java, Rust, Ocaml, Scala, C, Bash \\
 \#Papers & 45 & 90\textsuperscript{1} & 112 & \papersetsize \\
 \#Tasks & 45\textsuperscript{2} & 90\textsuperscript{3} & 112 & \tablesetsize \\
-\#Inconsistencies Found & 0 & 0 & 0 & \inconsistenciessize \\
+\#Inconsistencies Found & 0 & 0 & 0 & \newbugsize \\
 \#Fast-path Found & 0 & 0 & 0 & \fastpathsize \\
 Time Limit & 10 minutes & 45 minutes & 2 hours & 8 hours \\
 Judging & Accuracy of outputs & Accuracy of outputs & Accuracy of reproducibility scores & Submitted script reproduces the claim \\
@@ -73,14 +73,14 @@ Motivated by agents’ struggles on \benchmark, we also develop \emph{Artisan}, 
 Artisan includes specialized tools for domain-specific challenges in artifact evaluation (Table~\ref{t:artisan_tools}).
 \todo{Add technical novelties of Artisan.}
 
-Our evaluation shows that while most LLM agents struggle on \benchmark, Artisan is the most effective, producing \particularscriptsize{} reproduction scripts and outperforming the baseline by \particularscriptsizeoutperform{}.
-During the construction of \benchmark, we also uncovered \inconsistenciessize~inconsistencies between papers and artifacts and \fastpathsize~fast paths that artifacts provide, demonstrating the strength of our approach to benchmark construction.
+Our evaluation shows that while most LLM agents struggle on \benchmark, Artisan is the most effective, producing \goodscripttsize{} reproduction scripts and outperforming the baseline by \goodscripttsizeoutperform{}.
+During the construction of \benchmark, we also uncovered \newbugsize~inconsistencies between papers and artifacts and \fastpathsize~fast paths that artifacts provide, demonstrating the strength of our approach to benchmark construction.
 
 In summary, this paper contributes the following:
 \begin{itemize}
     \item Artisan, an LLM agent which automates artifact evaluation through code generation.
     \item \benchmark, a benchmark that evaluates the code generation capabilities of LLM agents to reproduce Software Engineering papers.
-    \item Empirical evaluation which shows that Artisan generates \particularscriptsize{} new \particularscrip{}.
+    \item Empirical evaluation which shows that Artisan generates \goodscripttsize{} new \goodscript{}.
     \item Insights that automated artifact evaluation through code generation can reveal paper-artifact inconsistencies and fast-paths taken by agents.
     \item Publicly available Artisan and \benchmark: https://github.com/doehyunbaek/artisan
 \end{itemize}

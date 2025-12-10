@@ -41,7 +41,7 @@ For the baselines, we use the default system prompt of SWE-agent\footnote{\url{h
 
 \subsubsection{Metrics}
 
-To evaluate effectiveness, we measure the total number of \particularscrip~that LLM agents successfully generate.
+To evaluate effectiveness, we measure the total number of \goodscript~that LLM agents successfully generate.
 To measure this, we use the Best-of-\(N\) metric with \(N=10\):
 each agent may attempt to reproduce a table up to \(N\) times sequentially, terminating early if any attempt leads to a successful reproduction.
 To evaluate efficiency, we report total wall-clock time and LLM token cost per task.
