@@ -34,10 +34,9 @@
 \newcommand\goodscript{reproduction script}
 \newcommand\newbug{paper-artifact inconsistencies}
 \newcommand\fastpath{fast-path}
-\newcommand\slowpath{slow-path}
 
-\newcommand\papersetsize{28}
-\newcommand\tablesetsize{101}
+\newcommand\papersetsize{23}
+\newcommand\tablesetsize{61}
 \newcommand\goodscripttsize{46}
 \newcommand\newbugsize{20}
 \newcommand\fastpathsize{38}
@@ -47,22 +46,21 @@
 
 \title{Artisan: Automated Artifact Evaluation with Agents}
 \begin{abstract}
-Artifact evaluation has become a standard practice in the research community to ensure the reproducibility of research artifacts.
-However, in its current form, it remains notoriously labor-intensive.
-To mitigate this, recent work has attempted using LLM agents to automatically reproduce research results.
-But, they mostly frame the task as output prediction task, which (1) does not consider how the output is obtained (2) can not distinguish error on the side of agent or artifact when the results do not match.
-To address this, we present \approach, an automated artifact evaluation approach that frames the task as code generation task.
-Given a numerical result of the research paper, \approach~autonomously takes actions to reproduce the result.
-After the course of action, \approach~encapsulates this knowledge into a \emph{\goodscript}, which can be run independently to reproduce research results.
-If the results match, our judging mechanism also evaluates \goodscript{}~on how the result is obtained, by using LLM-as-Judge that evaluates the completeness of the reproduction.
-This mechanism precludes trivial~\goodscript~that just copies the checked-in research results, which we call \emph{\fastpath}.
-If the results mismatch, it could be that the error is on the side of either paper or artifact, which we call \emph{\newbug}
-The presence of \goodscript, which runs independently of LLM, acts as a credible evidence if this the case.
-To evaluate \approach, we present \benchmark, a new benchmark that evaluates LLM agents' capabilities to generate \goodscript.
-\benchmark~comprises of 61 tasks that are derived from 23 Software Engineering papers.
-All the tasks in \benchmark~are manually validated to be reproducible and it covers diverse software engineering techniques and programming languages.
-Our experiments show that Artisan is effective, producing \goodscripttsize{} \goodscript{}~and outperforming the baseline by \goodscripttsizeoutperform{}$\times$.
-Furthermore, during the course of applying \approach~to \benchmark, we uncovered \fastpathsize~\fastpath{}~ and \newbugsize~\newbug{}, demonstrating the strength of our approach.
+Artifact evaluation has become a standard practice in the research community to ensure the reproducibility of research results.
+However, the current process remains notoriously labor-intensive.
+To mitigate this, recent work has explored using LLM agents to automatically reproduce research results.
+However, these approaches mostly frame the problem as an output prediction task, which (1) ignores how the output is obtained and (2) cannot distinguish between agent errors and artifact errors when results mismatch.
+To address this, we present \approach, an automated artifact evaluation approach that frames the task as a code generation task.
+Given a numerical result from a paper, \approach~autonomously takes actions to reproduce the result.
+Subsequently, \approach~encapsulates this knowledge into a \emph{\goodscript}, which can be run independently to reproduce the results.
+If the results match, our judging mechanism uses an LLM-as-Judge to evaluate the completeness of the reproduction.
+This mechanism precludes trivial~\goodscript~that merely copies checked-in results, which we term \emph{\fastpath}.
+If the results mismatch, it could be that the error is on the side of either the paper or the artifact, which we term \emph{\newbug}.
+To evaluate \approach, we introduce \benchmark, a new benchmark evaluating LLM agents' capabilities to generate \goodscript.
+\benchmark~comprises 61 tasks derived from 23 Software Engineering papers.
+All tasks in \benchmark~are manually validated for reproducibility and cover diverse software engineering techniques and programming languages.
+Our experiments show that \approach~is effective, producing \goodscripttsize{} new \goodscript{}~and outperforming the baseline by \goodscripttsizeoutperform{}$\times$.
+Furthermore, applying \approach~to~\benchmark~uncovered~\fastpathsize~\fastpath{}~and \newbugsize~\newbug{}, demonstrating the strength of our approach.
 \end{abstract}
 \maketitle
 

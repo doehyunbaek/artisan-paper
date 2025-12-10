@@ -9,7 +9,7 @@ We first state the requirements we target (Section~\ref{s:requirements}), then d
 
 We impose two core requirements on \benchmark.
 (1) Tasks should closely reflect real-world artifact evaluation so that performance on the benchmark generalizes to practical use.
-This addresses limitations of prior benchmarks~\cite{SUPER,DBLP:journals/tmlr/SiegelKNSN24,DBLP:conf/acl/HuZLWPK25}, which we find do not fully mirror artifact evaluation as practiced in the software engineering community.
+This addresses limitations of prior benchmarks~\cite{super,corebench,reprobench}, which we find do not fully mirror artifact evaluation as practiced in the software engineering community.
 (2) Manual validation is required.
 Although SWE-Bench~\cite{jimenez2024swebench} is influential for evaluating LLMs on real software engineering issues, subsequent efforts such as SWE-Bench Verified~\cite{chowdhury2024swebenchverified} and~\cite{DBLP:journals/corr/abs-2503-15223} highlight the importance of human verification to avoid overestimating or underestimating agent capabilities.
 These requirements introduce trade-offs.
@@ -49,11 +49,11 @@ To implement this, we search Python files and Jupyter notebooks for ``openai'' o
 All eight excluded papers use OpenAI APIs.
 (4) We exclude artifacts requiring GPUs or specialized hardware to maintain accessibility across hardware setups.
 We search for common GPU keywords (e.g., \texttt{cuda}, \texttt{cudnn}, \texttt{tensorflow}, \texttt{nvidia-smi}, \texttt{gpus}) while ignoring non-code extensions (e.g., \texttt{.txt}, \texttt{.csv}, \texttt{.json}, \texttt{.log}).\footnote{\url{https://github.com/doehyunbaek/artisan/blob/bc7e6cd/evaluation/select_papers.py\#L312}}
-This aligns with previous work~\cite{SUPER} that exclude papers that require GPU use due to cost.
+This aligns with previous work~\cite{super} that exclude papers that require GPU use due to cost.
 (5) We require that each task can be completed within eight hours.
 We search the paper text for the keyword ``hour'' and exclude papers that explicitly mention timeouts beyond eight hours.
 Out of eleven papers excluded, seven papers use 24 hours timeout, three papers use 12 hours timeout, and one paper uses 125 hour timeout.
-This time requirement is much higher than the previous work (10 minutes for \cite{SUPER}) which might make the evaluation longer.
+This time requirement is much higher than the previous work (10 minutes for \cite{super}) which might make the evaluation longer.
 We motivate this decision to cover diverse software engineering techniques, where many takes hours of compute to output meaningful outcome, even partial ones.
 (6) Finally, we manually attempt to reproduce each paper’s major claim within an eight-hour budget; failures to set up the environment or reproduce the claim lead to exclusion.
 Out of seven papers excluded, two are excluded as most of the evaluation dataset is missing, two are excluded as raw data is missing, two are excluded as script to generate results from raw data are missing, and one is excluded as docker image mentioned in the artifact is no longer accessible.
@@ -81,7 +81,7 @@ This is mainly due to our exclusion of papers using non-public APIs and GPUs.
 Still, there is one paper~\cite{DBLP:conf/kbse/LeeJL24} which makes use of classical machine learning technique (Random forest and XGBoost) which does not make use of either non-public APIs and GPUs.
 Table~\ref{t:languages} shows the distribution of programming languages covered by our paper seleciton.
 Overall, Python is the most prevalent, comprising 57\% of the papers.
-However, there is a sizable representation of other languages, notably Java, Rust, Ocaml, Scala, C, and even Bash, which were not covered in the previous benchmarks~~\cite{SUPER, DBLP:journals/tmlr/SiegelKNSN24, DBLP:conf/acl/HuZLWPK25}.
+However, there is a sizable representation of other languages, notably Java, Rust, Ocaml, Scala, C, and even Bash, which were not covered in the previous benchmarks~~\cite{super, corebench, reprobench}.
 
 \subsection{Task Selection}
 \label{s:task_select}
@@ -116,7 +116,7 @@ We first give general criteria (Section~\ref{s:task_selection_criteria}).
 \subsection{Grading}
 \label{s:grading}
 
-Unlike previous work~~\cite{SUPER,DBLP:journals/tmlr/SiegelKNSN24} we allow submission and getting the feedback whle agent is running.
+Unlike previous work~~\cite{super,corebench} we allow submission and getting the feedback whle agent is running.
 This helps improve the effectiveness of the agent, as shown in ~\ref{s:eval_judging}
 
 \subsection{User Prompt for Task Definition}
