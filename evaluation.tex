@@ -11,20 +11,16 @@ How efficient is \approach{} in terms of time and monetary cost?
 \item \textbf{RQ3. Ablation Study}:
 What is the impact of different tools in different configurations?
 \item \textbf{RQ4. Effectiveness and Accuracy of LLM-Basesd Tools}:
-What is the impact of different tools in different configurations?
+What is the effectiveness of LLM-based Format tool and accuracy of LLM-based Judge tool?
 \end{itemize}
 
 \subsection{Experimental Setup}
 
 \subsubsection{Datasets}
 
-We use \benchmark{} introduced in Section~\ref{s:benchmark} to evaluate our approach and the baselines.
-
-\subsubsection{Implementation and Model}
-
-We build \approach{} on top of mini-swe-agent~\cite{minisweagent,sweagent}.
-Our tools are implemented in Python~3.12.10.
-We use \texttt{GPT-5-mini-2025-08-07} as the model.
+For RQ1, RQ2, RQ3, We use \benchmark{} introduced in Section~\ref{s:benchmark} to evaluate our approach and the baselines.
+For RQ4-1, we use 61 ground truth scripts to prepare inputs used to evaluate the effectiveness of Format tool.
+For RQ4-2, we use 61 ground truth scripts (31~\fullrepro~scripts, 30~\downrepro~scripts), plus 25~\copyrepro~scripts that we collected during the development to evaluate the accuracy of the Judge tool.
 
 \subsubsection{Baselines}
 
@@ -33,23 +29,37 @@ We choose mini-swe-agent for two reasons:
 (1) \approach{} is built on top of mini-swe-agent; thus, comparing \approach{} with mini-swe-agent enables a thorough empirical study of \approach{}'s contributions.
 (2) mini-swe-agent achieves competitive performance (70.6\% resolved on SWE-Bench Verified with Claude~4.5 Sonnet, compared to 78.8\% for the top score on the current leaderboard), while remaining simple (131~LOC in the core).
 We also include SWE-agent as an established state-of-the-art approach for general software engineering tasks.
-For both mini-swe-agent and SWE-agent, we use the same model (\texttt{GPT-5-mini-2025-08-07}).
-
-\subsubsection{System Prompt Used}
-
-To implement \approach{}, we use a system prompt developed for artifact evaluation\footnote{\url{https://github.com/doehyunbaek/artisan/blob/9b13d07f/src/artisan/mini.py\#L22-\#L71}}.
-This is combined with the user prompt described in Section~\ref{s:user-prompt} to constitute the agent input.
-For the baselines, we use the default system prompt of SWE-agent\footnote{\url{https://github.com/SWE-agent/SWE-agent/blob/8089c8ba/config/default.yaml\#L7}} and the default system prompt of mini-swe-agent\footnote{\url{https://github.com/SWE-agent/mini-swe-agent/blob/eeaf79b4/src/minisweagent/config/default.yaml\#L2-\#L17}}.
+For both baseslines and~\approach, we experiment with gpt-5.1-2025-11-13, gpt-5-mini-2025-08-07, and gpt-5-nano-2025-08-07.
 
 \subsubsection{Metrics}
 
-To evaluate effectiveness, we measure the total number of \goodscript~that LLM agents successfully generate.
-To measure this, we use the Best-of-\(N\) metric with \(N=10\):
-each agent may attempt to reproduce a table up to \(N\) times sequentially, terminating early if any attempt leads to a successful reproduction.
+To evaluate effectiveness, we measure the sum of~\fullrepro~scripts and~\downrepro{}~scripts each approaches generate.
+For the reproduction method we report, we report the result of the manual validation, not the one reported by the Judge tool (Section \ref{s:judge}).
 To evaluate efficiency, we report total wall-clock time and LLM token cost per task.
+
+\subsection{RQ1: Effectiveness}
+\label{s:effectiveness}
 
 \begin{table}[t]
   \caption{Effectiveness of \approach{} on \benchmark{}.}
   \label{t:big_table}
   \input{tables/big-table}
+\end{table}
+
+\begin{table}[t]
+  \caption{Comparison of \approach{} with baselines.}
+  \label{t:Baseline}
+  \input{tables/baseline}
+\end{table}
+
+\subsection{RQ2: Efficiency}
+\label{s:efficiency}
+
+\subsection{RQ3: Ablation Study}
+\label{s:ablation}
+
+\begin{table}[t]
+  \caption{Ablation study of \approach.}
+  \label{t:ablation}
+  \input{tables/ablation}
 \end{table}

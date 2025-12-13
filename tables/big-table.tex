@@ -1,35 +1,33 @@
-\begin{tabular}{lcccc}
+\begin{tabular}{lccccccc}
 \toprule
- ID            &  Auto Scripts  &  Partial Scripts  &  Manual Scripts  &  Total Tasks  \\
+\multirow{2}{*}{ID} & \multicolumn{2}{c}{Success} & \multicolumn{4}{c}{Failure} & \multirow{2}{*}{\shortstack{Total\\Tasks}} \\
+\cmidrule(lr){2-3} \cmidrule(lr){4-7}
+ & Full Rep. & Down. Rep. & Copy Res. & Res. Mis. & Run. Err. & Stat. Err. & \\
 \midrule
- pythonic      &       8        &         0         &        1         &       9       \\
- action        &       1        &         2         &        3         &       6       \\
- pmsat         &       2        &         0         &        3         &       5       \\
- trace2inv     &       0        &         0         &        5         &       5       \\
- roam          &       5        &         0         &        0         &       5       \\
- rust          &       2        &         0         &        2         &       4       \\
- unimocg       &       4        &         0         &        0         &       4       \\
- crossover     &       3        &         0         &        0         &       3       \\
- flashsyn      &       3        &         0         &        0         &       3       \\
- bloat         &       3        &         0         &        0         &       3       \\
- provenfix     &       0        &         0         &        3         &       3       \\
- axa           &       3        &         0         &        0         &       3       \\
- npetest       &       2        &         0         &        1         &       3       \\
- llm           &       2        &         0         &        0         &       2       \\
- bazel         &       1        &         0         &        1         &       2       \\
- dypybench     &       0        &         0         &        1         &       2       \\
- goblinupdater &       0        &         0         &        2         &       2       \\
- bcia          &       1        &         0         &        1         &       2       \\
- lasapp        &       1        &         0         &        1         &       2       \\
- neurojit      &       1        &         0         &        1         &       2       \\
- dueforce      &       0        &         0         &        2         &       2       \\
- mutation      &       1        &         0         &        0         &       1       \\
- ppt4j         &       1        &         0         &        0         &       1       \\
- sctype        &       0        &         1         &        0         &       1       \\
- fuzzslice     &       0        &         0         &        1         &       1       \\
- inference     &       1        &         0         &        0         &       1       \\
- pyinder       &       0        &         0         &        1         &       1       \\
- urcrat        &       1        &         0         &        0         &       1       \\
- Total         &       46       &         3         &        29        &      79       \\
+pythonic      & & & & & & & 9 \\
+action        & & & & & & & 6 \\
+pmsat         & & & & & & & 5 \\
+roam          & & & & & & & 5 \\
+rust          & & & & & & & 4 \\
+unimocg       & & & & & & & 4 \\
+crossover     & & & & & & & 3 \\
+bloat         & & & & & & & 3 \\
+provenfix     & & & & & & & 3 \\
+axa           & & & & & & & 3 \\
+npetest       & & & & & & & 3 \\
+llm           & & & & & & & 2 \\
+bazel         & & & & & & & 2 \\
+dypybench     & & & & & & & 2 \\
+goblinupdater & & & & & & & 2 \\
+bcia          & & & & & & & 2 \\
+lasapp        & & & & & & & 2 \\
+neurojit      & & & & & & & 2 \\
+mutation      & & & & & & & 1 \\
+ppt4j         & & & & & & & 1 \\
+sctype        & & & & & & & 1 \\
+inference     & & & & & & & 1 \\
+urcrat        & & & & & & & 1 \\
+\midrule
+Total         & & & & & & & 61 \\
 \bottomrule
 \end{tabular}
