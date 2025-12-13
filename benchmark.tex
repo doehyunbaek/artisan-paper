@@ -2,14 +2,14 @@
 \label{s:benchmark}
 
 In this section, we present the methodology used to construct \benchmark.
-We first state the requirements we target (Section~\ref{s:requirements}), then describe paper selection (Section~\ref{s:paper_select}), task selection (Section~\ref{s:task_select}), an example task (Section~\ref{s:task_example}), and our grading scheme (Section~\ref{s:grading}).
+We first state the requirements we target (Section~\ref{s:requirements}), then describe paper selection (Section~\ref{s:paper_select}) and task selection (Section~\ref{s:task_select}).
 
 \subsection{Requirements}
 \label{s:requirements}
 
 We impose two core requirements on \benchmark.
 (1) Tasks should closely reflect real-world artifact evaluation so that performance on the benchmark generalizes to practical use.
-This addresses limitations of prior benchmarks~\cite{super,corebench,reprobench}, which we find do not fully mirror artifact evaluation as practiced in the software engineering community.
+This addresses limitations of prior benchmarks~\cite{super,corebench,reprobench}, which we find do not fully mirror artifact evaluation as practiced in the computer science research.
 (2) Manual validation is required.
 Although SWE-Bench~\cite{jimenez2024swebench} is influential for evaluating LLMs on real software engineering issues, subsequent efforts such as SWE-Bench Verified~\cite{chowdhury2024swebenchverified} and~\cite{DBLP:journals/corr/abs-2503-15223} highlight the importance of human verification to avoid overestimating or underestimating agent capabilities.
 These requirements introduce trade-offs.
@@ -29,10 +29,36 @@ Further, very large tasks increase time and monetary cost, which can be prohibit
     \midrule
     Flagship SE conference papers (2024) with \emph{Available} and \emph{Reusable} badges & 114 \\
     Packaged using Docker & 72 \\
-    No non-public API use & 65 \\
-    No GPU use & 46 \\
-    Less than eight hours per task & 35 \\
+    No non-public API use & 63 \\
+    No GPU use & 44 \\
+    Less than eight hours per task & 32 \\
     Manual reproduction successful & \papersetsize \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{table}[t]
+  \centering
+  \caption{Distribution of Software Engineering Techniques and Programming Languages.}
+  \label{t:paper_distribution}
+  \begin{tabular}{lclc}
+    \toprule
+    \textbf{Technique} & \textbf{Papers} & \textbf{Language} & \textbf{Papers} \\
+    \midrule
+    Empirical Study             & 5 & Python & 13 \\
+    Static Analysis             & 5 & Java   & 4  \\
+    Security                    & 2 & Rust   & 2  \\
+    Dynamic Analysis            & 2 & Scala  & 2  \\
+    Software Maintenance        & 2 & OCaml  & 1  \\
+    Fuzzing                     & 1 & Bash   & 1  \\
+    Mutation Testing            & 1 &        &    \\
+    Model-based Testing         & 1 &        &    \\
+    Mobile Applications         & 1 &        &    \\
+    Program Repair              & 1 &        &    \\
+    Test Automation             & 1 &        &    \\
+    AI for Software Engineering & 1 &        &    \\
+    \midrule
+    \textbf{Total}              & \textbf{23} & \textbf{Total} & \textbf{23} \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -41,46 +67,34 @@ Guided by these requirements, we curate a set of \papersetsize~papers following 
 (1) We gather 114 papers from four flagship software engineering venues (ICSE, FSE, ASE, ISSTA) in 2024 with ACM \emph{Artifacts Available} and \emph{Artifacts Evaluated—Reusable} badges~\cite{acm-artifact-badging-v1_1}.
 We then manually locate links to the accompanying artifacts.
 For FSE and ISSTA, the ACM Digital Library lists artifact links; for other venues, we use a web search (e.g., Google) with the paper title.
-(2) We keep 76 papers whose artifacts are packaged using Docker.
+(2) We exclude 42 papers whose artifacts are not packaged using Docker.
 This reflects the fact that Docker and related virtualization technologies are now standard in artifact evaluation~\cite{icse2024-ae,fse2024-ae,ase2024-ae}.
-To implement this, we case-insensitively search Markdown and PDF files for the term ``docker''.\footnote{\url{https://github.com/doehyunbaek/artisan/blob/bc7e6cd/evaluation/select_papers.py\#L234}}
-(3) We exclude papers that rely on non-public APIs to ensure the benchmark is reproducible.
-To implement this, we search Python files and Jupyter notebooks for ``openai'' or ``anthropic''.\footnote{\url{https://github.com/doehyunbaek/artisan/blob/bc7e6cd/evaluation/select_papers.py\#L276}}
-All eight excluded papers use OpenAI APIs.
-(4) We exclude artifacts requiring GPUs or specialized hardware to maintain accessibility across hardware setups.
-We search for common GPU keywords (e.g., \texttt{cuda}, \texttt{cudnn}, \texttt{tensorflow}, \texttt{nvidia-smi}, \texttt{gpus}) while ignoring non-code extensions (e.g., \texttt{.txt}, \texttt{.csv}, \texttt{.json}, \texttt{.log}).\footnote{\url{https://github.com/doehyunbaek/artisan/blob/bc7e6cd/evaluation/select_papers.py\#L312}}
+To implement this, we case-insensitively search Markdown and PDF files for the term ``docker''.
+% \footnote{\url{https://github.com/doehyunbaek/artisan/blob/bc7e6cd/evaluation/select_papers.py\#L234}}
+(3) We exclude nine papers that rely on non-public APIs.
+To implement this, we search Python files and Jupyter notebooks for ``openai'' or ``anthropic''.
+We also search Markdown files for ``etherscan''.
+This excludes seven papers using OpenAI APIs and two papers using Etherscan APIs.
+% .\footnote{\url{https://github.com/doehyunbaek/artisan/blob/bc7e6cd/evaluation/select_papers.py\#L276}}
+(4) We exclude 19 paprs that require GPUs or specialized hardware.
+This is to maintain accessibility across hardware setups.
+We search for common GPU keywords (e.g., \texttt{cuda}, \texttt{cudnn}, \texttt{tensorflow}, \texttt{nvidia-smi}, \texttt{gpus}) while ignoring non-code extensions (e.g., \texttt{.txt}, \texttt{.csv}, \texttt{.json}, \texttt{.log}).
+% \footnote{\url{https://github.com/doehyunbaek/artisan/blob/bc7e6cd/evaluation/select_papers.py\#L312}}
 This aligns with previous work~\cite{super} that exclude papers that require GPU use due to cost.
-(5) We require that each task can be completed within eight hours.
-We search the paper text for the keyword ``hour'' and exclude papers that explicitly mention timeouts beyond eight hours.
-Out of eleven papers excluded, seven papers use 24 hours timeout, three papers use 12 hours timeout, and one paper uses 125 hour timeout.
+(5) We exclude twelve papers that require more than eight hours.
+We search the paper and artifact for the keyword ``hour'' and exclude papers that explicitly mention experiment time beyond eight hours.
+Out of twelve papers excluded, seven papers take more than 24 hours, four papers take more than 12 hours, and one paper takes more than 125 hours.
 This time requirement is much higher than the previous work (10 minutes for \cite{super}) which might make the evaluation longer.
 We motivate this decision to cover diverse software engineering techniques, where many takes hours of compute to output meaningful outcome, even partial ones.
-(6) Finally, we manually attempt to reproduce each paper’s major claim within an eight-hour budget; failures to set up the environment or reproduce the claim lead to exclusion.
-Out of seven papers excluded, two are excluded as most of the evaluation dataset is missing, two are excluded as raw data is missing, two are excluded as script to generate results from raw data are missing, and one is excluded as docker image mentioned in the artifact is no longer accessible.
+(6) Finally, we exclude nine papers that we could not manually reproduce within an eight-hour budget.
+Out of nine papers excluded, two are excluded as most of the evaluation dataset is missing, two are excluded as raw data is missing, two are excluded as script to generate results from raw data are missing, two are excluded as the outputs are non-deterministic, and one is excluded as docker image mentioned in the artifact is no longer accessible.
 
-\begin{table}[t]
-  \centering
-  \begin{minipage}[t]{0.48\textwidth}
-    \centering
-    \caption{Software engineering techniques covered by our paper selection.}
-    \label{t:topics}
-    \input{tables/topic_distribution}
-  \end{minipage}\hfill
-  \begin{minipage}[t]{0.48\textwidth}
-    \centering
-    \caption{Programming languages in the selected papers.}
-    \label{t:languages}
-    \input{tables/language_distribution}
-  \end{minipage}
-\end{table}
-
-Table~\ref{t:topics} shows the distribution of software engineering techniques covered by our paper selection.
-Overall, there is a diverse selection of software engineering techniques.
+Table~\ref{t:paper_distribution} shows the distribution of software engineering techniques and programming languages covered by our paper selection.
+For software engineering techniques, there is a diverse selection of software engineering techniques.
 One notable exception is a possible under-representation of AI4SE and SE4AI techniques.
 This is mainly due to our exclusion of papers using non-public APIs and GPUs.
 Still, there is one paper~\cite{DBLP:conf/kbse/LeeJL24} which makes use of classical machine learning technique (Random forest and XGBoost) which does not make use of either non-public APIs and GPUs.
-Table~\ref{t:languages} shows the distribution of programming languages covered by our paper seleciton.
-Overall, Python is the most prevalent, comprising 57\% of the papers.
+For programming languages, Python is the most prevalent, comprising 57\% of the papers.
 However, there is a sizable representation of other languages, notably Java, Rust, Ocaml, Scala, C, and even Bash, which were not covered in the previous benchmarks~~\cite{super, corebench, reprobench}.
 
 \subsection{Task Selection}
@@ -94,34 +108,49 @@ However, there is a sizable representation of other languages, notably Java, Rus
     \toprule
     Criterion & Count \\
     \midrule
-    Total number of tables & 114 \\
-    No non-result tables & 101 \\
-    Manual reproduction successful & \tablesetsize \\
+    Total number of tables & 89 \\
+    Exclude non-results & 68 \\
+    Exclude missing codes & 62 \\
+    Exclude non-deterministic only & \tablesetsize \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{table}[t]
+  \centering
+  \caption{Distribution of inconsistent tables and partial tables.}
+  \label{t:task_distribution}
+  \begin{tabular}{lclc}
+    \toprule
+    \textbf{Consistency} & \textbf{Tasks} & \textbf{Original Tables} & \textbf{Tasks} \\
+    \midrule
+    Consistent Table    & 38 & Original Table  & 41 \\
+    Inconsistent Table  & 23 & Partial Table   & 20 \\
+    \midrule
+    \textbf{Total}              & \textbf{\tablesetsize} & \textbf{Total} & \textbf{\textbf{\tablesetsize} } \\
     \bottomrule
   \end{tabular}
 \end{table}
 
 From \papersetsize~papers selected, we curate \tablesetsize~tasks that is given to LLM agents as a single task instance.
-We first give general criteria (Section~\ref{s:task_selection_criteria}).
+We start with 89 tables that are contained in the~\papersetsize~papers.
+(1) We exclude 21 non-results tables.
+Out of 21 non-result tables excluded, 14 tables contain description of evaluation setups, 7 tables contain the descriptions of the approach.
+(2) We exclude six tables that were missing codes to reproduce the results.
+For all six tables, codes reproducing the other parts of the experiment is present but the code for some of the parts are missing.
+(3) We exclude one table that only contain the non-deterministic result.
+For PPT4J~\cite{DBLP:conf/icse/Pan00Z0024}, Table 3, the table reports only the time consumption of the approaches.
+As~\approach~do not handle non-deterministic results such as time consumption, we exclude this table.
+For the remaining~\tablesetsize~tasks, we reproduce the tables and obtain ground truths scripts that reproduce the table.
 
-\subsubsection{Task Selection criteria}
-\label{s:task_selection_criteria}
+Table~\ref{t:task_distribution} shows the distribution of paper-artifact inconsistencies found, the degree to the tables are original, and the kind of reproduction of ground truth scripts.
+23 tables that we use for the benchmark are different with the table in the paper.
+For 19, it is because of~\newbug~that we found, which we discuss in detail in Section~\ref{s:inconsistencies}.
+For three, it is because the paper authors claim the results of the artifact could be slightly different with that of the paper~\cite{DBLP:journals/pacmse/Song0LCR24} and for one, it is because the implementation used for the paper~\cite{DBLP:conf/kbse/Bock0C24} contains a bug, which is fixed now.
+20 tables that we use for the benchmark contain partial entries compared to the table in the paper.
+For 15, we could only partially reproduce the results of the original table with our ground truth scripts.
+For 5, we exclude the parts where the output is nondeterministic.
 
-
-\subsection{Example Task}
-\label{s:task_example}
-
-% (Your example task description goes here.)
-
-\subsection{Grading}
-\label{s:grading}
-
-Unlike previous work~~\cite{super,corebench} we allow submission and getting the feedback whle agent is running.
-This helps improve the effectiveness of the agent, as shown in ~\ref{s:eval_judging}
-
-\subsection{User Prompt for Task Definition}
-\label{s:user-prompt}
-
-To ensure the fairness of comparison with agents, we enforce a usage of single user prompt for task definition across all the agents.
-Each agent can do the prompt tuning in their system prompt.
-The user prompt for task definition is listed at here~\footnote{\url{https://github.com/doehyunbaek/artisan//blob/9b13d07f/src/artisan/mini.py\#L75-\#L140}}.
+% \textbf{Ground Truth Kind} & \textbf{Tasks} \\
+% & Full Reproduction       & 31 \\
+% & Downstream Reproduction & 30 \\
