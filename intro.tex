@@ -1,7 +1,7 @@
 \section{Introduction}
 \label{s:introduction}
 
-Since the pilot of artifact evaluation at ESEC/FSE 2011, artifact evaluation has become standard practice in computer science, being adopted in software engineering~\cite{DBLP:conf/sigsoft/Hermann0S20}, programming languages~\cite{DBLP:journals/cacm/KrishnamurthiV15}, security\cite{DBLP:conf/ccs/OlszewskiLSWKPU23}, and database communities~\cite{DBLP:journals/sigmod/AthanassoulisTA22}.
+Since the pilot of artifact evaluation at ESEC/FSE 2011, artifact evaluation has become standard practice in computer science, being adopted in software engineering~\cite{DBLP:conf/sigsoft/Hermann0S20}, programming languages~\cite{DBLP:journals/cacm/KrishnamurthiV15}, security~\cite{DBLP:conf/ccs/OlszewskiLSWKPU23}, and database communities~\cite{DBLP:journals/sigmod/AthanassoulisTA22}.
 One of its main goals is reproducibility, defined as obtaining similar experimental outcomes with the same experimental setup by a different team~\cite{acm-artifact-badging-v1_1}.
 Reproducibility is generally regarded by participants as one of the most important goals of artifact evaluation~\cite{DBLP:conf/sigsoft/Hermann0S20}.
 In addition, studies report that artifact evaluation leads to more available, maintained, and documented artifacts~\cite{DBLP:conf/se/0001T0C0H024}.
@@ -60,11 +60,10 @@ To evaluate \approach, we develop \benchmark, a new benchmark that evaluates LLM
 \benchmark~comprises 61 tasks derived from 23 Software Engineering papers.
 All tasks in \benchmark~are manually validated for reproducibility, and the benchmark offers the following advantages compared to existing ones:
 (1) \benchmark~targets the reproduction of tables extracted from research papers as-is.
-Only non-deterministic parts are filtered out to get the partial table for the subsets.
+Only non-deterministic or time-consuming parts are filtered out to get the partial table for the subsets.
 This differs from previous benchmarks that handcraft results suitable for reproduction.
-(2) \benchmark~covers diverse software engineering techniques and programming languages.
-Previous benchmarks are limited in both software engineering techniques (ML / NLP) and programming languages (Python, R, and Stata).
-\benchmark~covers diverse software engineering techniques (e.g., Empirical Study, Security, Fuzzing, Static Analysis, Dynamic Analysis) and programming languages (Python, Java, Rust, OCaml, Scala, Bash, C).
+(2) \benchmark~covers diverse software engineering techniques (e.g., Empirical Study, Security, Fuzzing, Static Analysis, Dynamic Analysis) and programming languages (Python, Java, Rust, OCaml, Scala, Bash, C).
+This differs from previous benchmarks limited in both software engineering techniques (ML / NLP) and programming languages (Python, R, and Stata).
 (3) \benchmark~covers reproduction tasks that take significantly longer (eight hours), extending the scope that benchmarks cover.
 
 \begin{table}[t]
