@@ -5,43 +5,45 @@ To evaluate our approach, we answer the following research questions:
 
 \begin{itemize}[labelindent=\parindent,leftmargin=*]
 \item \textbf{RQ1. Effectiveness}:
-How effective is \approach{} at generating reproduction scripts for tables in software engineering research papers?
+How effective is \approach{} at generating reproduction scripts?
 \item \textbf{RQ2. Efficiency}:
 How efficient is \approach{} in terms of time and monetary cost?
 \item \textbf{RQ3. Ablation Study}:
 What is the impact of different tools in different configurations?
-\item \textbf{RQ4. Effectiveness and Accuracy of LLM-Basesd Tools}:
-What is the effectiveness of LLM-based Format tool and accuracy of LLM-based Judge tool?
+\item \textbf{RQ4. Fidelity and Accuracy of LLM-Based Tools}:
+What is the fidelity of the LLM-based Format tool and the accuracy of the LLM-based Judge tool?
 \end{itemize}
 
 \subsection{Experimental Setup}
 
 \subsubsection{Datasets}
 
-For RQ1, RQ2, RQ3, We use \benchmark{} introduced in Section~\ref{s:benchmark} to evaluate our approach and the baselines.
-For RQ4-1, we use 61 ground truth scripts to prepare inputs used to evaluate the effectiveness of Format tool.
-For RQ4-2, we use 61 ground truth scripts (31~\fullrepro~scripts, 30~\downrepro~scripts), plus 25~\copyrepro~scripts that we collected during the development to evaluate the accuracy of the Judge tool.
+For RQ1, RQ2, and RQ3, we use \benchmark{} introduced in Section~\ref{s:benchmark} to evaluate our approach and the baselines.
+For RQ4-1, we use 61 ground truth scripts to prepare inputs used to evaluate the fidelity of the Format tool.
+For RQ4-2, we use 61 ground truth scripts (31~\fullrepro~scripts, 30~\downrepro~scripts), plus 25~\copyrepro~scripts that we collected during development, to evaluate the accuracy of the Judge tool.
 
 \subsubsection{Baselines}
 
 As baselines, we select mini-swe-agent~\cite{minisweagent} and SWE-agent~\cite{sweagent}.
 We choose mini-swe-agent for two reasons:
 (1) \approach{} is built on top of mini-swe-agent; thus, comparing \approach{} with mini-swe-agent enables a thorough empirical study of \approach{}'s contributions.
-(2) mini-swe-agent achieves competitive performance (70.6\% resolved on SWE-Bench Verified with Claude~4.5 Sonnet, compared to 78.8\% for the top score on the current leaderboard), while remaining simple (131~LOC in the core).
+(2) mini-swe-agent achieves competitive performance (74.4\% resolved on SWE-Bench Verified with Claude Opus 4.5, compared to 78.8\% for the top score on the current leaderboard), while remaining simple (138~LOC in the core).
 We also include SWE-agent as an established state-of-the-art approach for general software engineering tasks.
-For both baseslines and~\approach, we experiment with gpt-5.1-2025-11-13, gpt-5-mini-2025-08-07, and gpt-5-nano-2025-08-07.
+For both baselines and~\approach, we experiment with gpt-5.1-2025-11-13, gpt-5-mini-2025-08-07, and gpt-5-nano-2025-08-07 as an LLM model.
 
 \subsubsection{Metrics}
 
-To evaluate effectiveness, we measure the sum of~\fullrepro~scripts and~\downrepro{}~scripts each approaches generate.
+To evaluate effectiveness, we measure the sum of~\fullrepro~scripts and~\downrepro{}~scripts each approach generates.
 For the reproduction method we report, we report the result of the manual validation, not the one reported by the Judge tool (Section \ref{s:judge}).
 To evaluate efficiency, we report total wall-clock time and LLM token cost per task.
-
+To evaluate the fidelity of the Format tool, we measure what percentage of formatted output matches the expected output with the execution log we manually validated to contain all the expected results given as an input.
+To evaluate the accuracy of the Judge tool, we measure what percentage of judgement of reproduction matches with the ground truth reproduction method label we have.
+We repeat RQ4 experiments ten times to account for an LLM non-determinism.
 \subsection{RQ1: Effectiveness}
 \label{s:effectiveness}
 
 \begin{table}[t]
-  \caption{Effectiveness of \approach{} on \benchmark{}.}
+  \caption{Effectiveness of \approach{} on \benchmark{}. GPT-5.1 used for model.}
   \label{t:big_table}
   \input{tables/big-table}
 \end{table}
@@ -59,7 +61,16 @@ To evaluate efficiency, we report total wall-clock time and LLM token cost per t
 \label{s:ablation}
 
 \begin{table}[t]
-  \caption{Ablation study of \approach.}
+  \caption{Ablation study of \approach. GPT-5.1 used for all experiments.}
   \label{t:ablation}
   \input{tables/ablation}
 \end{table}
+
+\subsection{RQ4: Fidelity and Accuracy of LLM-Based Tools}
+\label{s:llmtools}
+
+\subsubsection{RQ4-1: Fidelity of the Format tool}
+\label{s:eval_format}
+
+\subsubsection{RQ4-2: Accuracy of the Judge tool}
+\label{s:eval_judge}
