@@ -8,67 +8,89 @@
 \section{Approach}
 \label{s:approach}
 
-We first give a brief overview of the approach (Section ~\ref{s:overview}).
-Then, we give a detailed explanation of the three tools that we provide to the agent (Section \ref{s:get}, \ref{s:format}, \ref{s:judge})
+We first give a brief overview of the approach (Section~\ref{s:overview}).
+Then, we provide a detailed explanation of the three tools that we provide to the agent (Sections \ref{s:get}, \ref{s:format}, \ref{s:judge}).
+Finally, we explain the implementation details (Section~\ref{s:implementation}).
 
 \subsection{Overview}
 \label{s:overview}
 
 \begin{figure}[t]
   \centering
-  \begin{minted}{bash}
-#!/usr/bin/bash
-# Section 1: Artifact download
-artisan get {{ artifact_url }}
-# Section 2: Reproduction commands (populate from reviewed steps)
-<Commands to reproduce the table>
-# Section 3: Formatting and submission block
-artisan format --expected /workspace/expected.md --repro /workspace/repro.txt
+  \begin{minted}{markdown}
+## Goal
+Please reproduce the results reported in Table 6 from the SE paper.
+<obfuscated_result>
+**Table 6: Sensitivity of deactivating scheduled workflows to the parameter k.**
+
+| k                     |    1 |    2 |    5 |   10 |   15 |   20 |
+| --------------------- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Impact on VM time (%) | -?.? | -?.? | -?.? | -?.? | -?.? | -?.? |
+</obfuscated_result>
+The same result is available at `/workspace/obfuscated.md`.
+The paper that the result is from is available at `/workspace/paper.md`.
+
+## Workflow overview
+1. **Download the artifact** from https://zenodo.org/records/10529665.
+2. **Read the README** to understand reproduction steps.
+3. **Locate relevant commands** for Table 6.
+4. **Execute the required commands** step-by-step.
+5. **Author the reproduction script** `repro.sh` using the template below.
   \end{minted}
-  \caption{Script template provided to the agent to guide the code generation.}
-  \Description{Script template provided to the agent to guide the code generation.}
-  \label{f:script_template}
+  \caption{Example user prompt provided to the agent}
+  \Description{Example user prompt provided to the agent}
+  \label{f:user_prompt}
 \end{figure}
 
 \begin{figure}[t]
   \centering
   \begin{minted}{bash}
-cat > /workspace/repro_{{ artifact_name }}_table_{{ table_index }}.sh <<'EOF'
-{{ script_template }}
-EOF
-artisan judge /workspace/repro_{{ artifact_name }}_table_{{ table_index }}.sh
+#!/bin/bash
+artisan get https://zenodo.org/records/10529665 # Section 2.2: Get tool
+<Commands to reproduce the results> # Filled out by LLM Agent later
+artisan format obfuscated.md execution.txt # Section 2.3: Format tool
+artisan judge repro.txt # Section 2.4: Judge tool
   \end{minted}
-  \caption{Comand template provided to the agent to guide the script submission.}
-  \Description{Comand template provided to the agent to guide the script submission.}
-  \label{f:command_template}
+  \caption{Example script template provided to the agent.}
+  \Description{Example script template provided to the agent.}
+  \label{f:script_template}
 \end{figure}
 
-As \approach~tries to automate the artifact evaluation by tasking LLM agents to generate~\goodscript{}, we provide a script template that agents should follow for effective research reproduction.
-Figure \ref{f:script_template} shows a script template we provide.
+An LLM agent is an LLM-based system that uses tools to autonomously interact with the environment to achieve a given goal, provided in the form of a user prompt~\cite{DBLP:conf/icse/BouzeniaDP25}.
+Figure~\ref{f:user_prompt} gives an example of a user prompt given to our LLM agent to task it to generate~\goodscript~that reproduces Table 6 of Bouzenia and Pradel~\cite{DBLP:conf/icse/BouzeniaP24}.
+As a goal, the LLM agent is given a numerical result to reproduce, albeit with results obfuscated with question marks.
+While developing our approach, we found that giving the results unobfuscated led to the undesirable behavior of directly copying the given results.
+By giving results in an obfuscated form, we instruct LLM agents on what to reproduce but not on what the expected values are.
+In addition, the content of the paper is provided to the agent, with the results to reproduce obfuscated as well.
+As a workflow, the LLM agent is provided with a series of steps that should be taken to reproduce a numerical result from the research paper.
+We only provide high-level objectives that should be taken at each step, and the LLM agent autonomously executes actions to achieve these objectives.
+The five-step workflow provided to the agent is modeled after how researchers would tackle the problem of reproducing research artifacts themselves.
+
+The last step of the workflow, authoring the reproduction script, is the key distinction of our approach compared to existing work.
+As we try to automate the artifact evaluation by tasking LLM agents to generate~\goodscript{}, we provide a script template that agents should follow to guide the generation.
+Figure~\ref{f:script_template} shows the script template we provide.
 First, agents should fetch the artifact from different artifact repositories.
-We provide Get tool (Section~\ref{s:get}) to provide a unified interface to the artifact repositories.
+We provide the Get tool (Section~\ref{s:get}) to offer a unified interface to the artifact repositories.
 Then, the agent autonomously exercises the fetched artifact to reproduce the research results.
 As the commands needed to reproduce the results vary from artifact to artifact, we ask the agent to review the commands it has executed to fill in the necessary commands.
-Lastly, the agent has to analyze and format the execution logs into the expected format.
-To support this, we provide Format tool (Section~\ref{s:format}), which is an LLM-based formatter that takes an expected table and execution log as an input and output a formatted table.
-
-To guide the agent in reproducing the research result, we allow agent to get a feedback on the \goodscript~they have generated with Judge tool (Section~\ref{s:judge}).
-Figure \ref{f:command_template} shows a command template we provide to the agent.
-By writing the generated script to a file and calling a Judge tool, the agent can get feedback whether (1) the output of the generated code matches the actual table, and (2) the way~\goodscript~generates the output is appropriate.
-The agent can incorporate the feedback if any of the two conditions are not met, guiding the reproduction process.
+Next, the agent has to analyze and format the execution logs into the expected format.
+To support this, we provide the Format tool (Section~\ref{s:format}), which is an LLM-based formatter that takes an expected results and execution log as input and outputs a formatted results.
+Lastly, to guide the agent in reproducing the research result, we allow the agent to get feedback on the \goodscript~they have generated with the Judge tool (Section~\ref{s:judge}).
+By calling the Judge tool, the agent can get feedback on whether (1) the output of the generated code matches the actual results, and (2) the way~\goodscript~generates the output is appropriate.
+The agent can incorporate the feedback if either of the two conditions is not met, guiding the reproduction process.
 
 \subsection{\emph{Get} tool: Fetching Research Artifacts}
 \label{s:get}
 
-There currently exists multiple different repository providers that researchers use to archive their artifacts, including Zenodo, Figshare, and GitHub.
-Without the specizlied tool, LLM agent can still retrive the artifact from the given tool by utilizing CLI tools like curl to retrieve the artifact.
-However, we found that the agent stumbles on interacting with the repository API initially.
-In addition, complex probing of the repository API makes the code generation task more complicated, leading to more errors.
+There currently exist multiple different repository providers that researchers use to archive their artifacts, including Zenodo, Figshare, and GitHub.
+Without a specialized tool, an LLM agent can still retrieve the artifact by utilizing CLI tools like \texttt{curl}.
+However, we found that agents stumble when interacting with repository APIs initially.
+In addition, complex probing of repository APIs makes the code generation task more complicated, leading to more errors.
 
-To mitigate this, we implement Get tool, which agent can invoke with just the url to fetch the research artifact.
-It handles the repository-specific logic silently, downloads the research artifact, extracts the research artifact, and locate the README file of the artifact.
-It also supports caching of the artifact that has been already fetched before.
-While simple, we found that this is an effective strategy that helps the agent in initial fetching and also generating~\goodscript.
+To mitigate this, we implement the Get tool, which the agent can invoke with just the URL to fetch the research artifact.
+It handles the repository-specific logic silently, downloads the research artifact, extracts the research artifact, and locates the README file.
+It also supports caching of artifacts that have already been fetched.
+While simple, we found that this is an effective strategy that helps the agent in initial fetching and also in generating~\goodscript.
 
 \subsection{\emph{Format} tool: Formatting Execution Outputs into Results}
 \label{s:format}
@@ -110,9 +132,9 @@ While simple, we found that this is an effective strategy that helps the agent i
 | Yield Micro  | (omitted) |           ? |        ? |
 
     \end{minted}
-    \caption{Part of the obfuscated table provided as input.}
-    \Description{Part of the obfuscated table provided as input.}
-    \label{f:format_input_table}
+    \caption{Part of the obfuscated results provided as input.}
+    \Description{Part of the obfuscated results provided as input.}
+    \label{f:format_input_result}
   \end{subfigure}
   \hfill % Adds space between the figures
   % Second Subfigure
@@ -136,36 +158,36 @@ Executing Group 1
   \label{f:format_input}
 \end{figure}
 
-Even after an agent has successfully reproduced research results by running a series of command, the outputs of the commands are usually not exactly the same as in what is presented in the paper.
-Some artifacts also provide scripts that processes these execution outputs into one that is used in the paper, but many artifacts do not provide scripts.
-Of course, an LLM agent can try to write the missing processing script itself, but we found that it struggles to write such scripts in a lot of cases.
-In many cases, an LLM successfully ran commands necessary to reproduce the research results, but could not get correct score from the judge as the formatting of the execution outputs was inadequate.
+Even after an agent has successfully reproduced research results by running a series of commands, the outputs of the commands are usually not exactly the same as what is presented in the paper.
+Some artifacts also provide scripts that process these execution outputs into the format used in the paper, but many artifacts do not.
+Of course, an LLM agent can try to write the missing processing script itself, but we found that it struggles to write such scripts in many cases.
+Often, an LLM successfully ran commands necessary to reproduce the research results but could not get the correct score from the judge because the formatting of the execution outputs was inadequate.
 
-To address this, we implement Format tool, which is an LLM-based formatter that takes an expected table and execution log as an input and output a formatted table.
-% Figure \ref{f:format} shows a part of the system prompt that we use to implement the Format tool and 
-Figure \ref{f:format_input} shows an example input that is passed to a Format tool.
-You can see that while table expects the research result in a tabular format (Figure \ref{f:format_input_table}), the output of the execution is just a log file (Figure \ref{f:format_input_log}), and there is not much structure.
+To address this, we implement the Format tool, which is an LLM-based formatter that takes an obfuscated results and execution log as input and outputs a formatted results.
+Figure~\ref{f:format_input} shows an example input that is passed to the Format tool.
+While the research results are structured in a tabular format (Figure~\ref{f:format_input_result}), the output of the execution is just a log file (Figure~\ref{f:format_input_log}), lacking structure.
 In addition, the log file is 1,103 lines in total.
-Format tool passes expected table and execution output as inputs with some few-shot examples to the LLM, and outputs the tables with expected values filled-in.
+The Format tool passes the obfuscated results and execution output as inputs with few-shot examples to the LLM, and outputs the results with the expected values filled in.
 
 \subsection{\emph{Judge} tool: Evaluating Reproduction Attempts}
 \label{s:judge}
 
-In previous work which develops output-based agents~\cite{super, corebench}, we found two characteristics that we found inadequate in our problem formulation:
+In previous work developing output-based agents~\cite{super, corebench}, we found two characteristics that were inadequate for our problem formulation:
 (1) The agents do not get feedback on their submission while they are working on the problem.
-This becomes problematic in our case, as generating code that reproduces the result is more complex problem and has more room for error than outputting just the result.
+This becomes problematic in our case, as generating code that reproduces the result is a more complex problem and has more room for error than outputting just the result.
 (2) How the agents obtain the output is not judged.
-We observe many~\fastpath~that agents take while attempting to reproduce the result (Section \ref{s:fastpath}), and judge proper consideration of this phenoenon is important for accurate assessment of the LLM agents' capabilities.
-Thus, we propose two-tier judging system which addresses both problem, by execution-based judging of the submission~\ref{s:judge_execution}~and LLM-based judging of the reproduction method~\ref{s:judge_llm}.
+We observe many~\fastpath~that agents take while attempting to reproduce the result (Section~\ref{s:fastpath}), and judging proper consideration of this phenomenon is important for the accurate assessment of the LLM agents' capabilities.
+Thus, we propose a two-tier judging system which addresses both problems: execution-based judging of the submission (Section~\ref{s:judge_execution})~and LLM-based judging of the reproduction method (Section~\ref{s:judge_llm}).
+
 \subsubsection{Execution-Based Judging of Reproduction Scripts}
 \label{s:judge_execution}
 
-In our approach, LLM agents generate and submit a shell script that runs independently of any agent-related machinaries.
-Given the submission, our execution-based judging mechanism runs the submitted script in fresh container environment.
-Judging mechanism classify three cases where the submitted script fails judging in this phase.
-(1) Static Error: when the submitted script fails to run because of syntax error, judging mechanism judge the script as a static error and give the error message as a feedback.
-(2) Runtime Error: when the submitted script encounters error while running, judging mechanism judge the script as a runtime error and return which command caused error with what error message.
-(3) Result Mismatch: when the submitted script runs to completion without any error but the result is different with the expected values, judging mechanism judge the script as a result mismatch.
+In our approach, LLM agents generate and submit a shell script that runs independently of any agent-related machinery.
+Given the submission, our execution-based judging mechanism runs the submitted script in a fresh container environment.
+The judging mechanism classifies three cases where the submitted script fails judging in this phase:
+(1) Static Error: when the submitted script fails to run because of a syntax error, the judging mechanism judges the script as a static error and gives the error message as feedback.
+(2) Runtime Error: when the submitted script encounters an error while running, the judging mechanism judges the script as a runtime error and returns which command caused the error with the error message.
+(3) Result Mismatch: when the submitted script runs to completion without any error but the result differs from the expected values, the judging mechanism judges the script as a result mismatch.
 
 \begin{figure}[t]
   \centering
@@ -188,8 +210,8 @@ Judging mechanism classify three cases where the submitted script fails judging 
 |   | Resolved   | 7,799,929 |
 |   | Unresolved |   168,482 |
     \end{minted}
-    \caption{Results of the Submitted~\goodscript}
-    \Description{Results of the Submitted~\goodscript}
+    \caption{Actual Results}
+    \Description{Actual Results}
     \label{f:judge_execution_example_2}
   \end{subfigure}
   \hfill
@@ -199,7 +221,6 @@ Judging mechanism classify three cases where the submitted script fails judging 
 |---|:-----------|----------:|
 |   | Resolved   | 7,799,929 |
 |   | Unresolved |   ???,??? |
-Result mismatch: some cells differ
     \end{minted}
     \caption{Feedback Given to the Agents}
     \Description{Feedback Given to the Agents}
@@ -209,42 +230,38 @@ Result mismatch: some cells differ
   \label{f:judge_execution_example}
 \end{figure}
 
-Importantly, judging mechanism reveals which parts of the result the agent got right, but not the parts it got wrong.
-Figure~\ref{f:judge_execution_example}~gives example of this feedback mechanism.
-Suppose Figure~\ref{f:judge_execution_example_1}~is the expected result of the reproduction, and Figure~\ref{f:judge_execution_example_2}~is the result obtained after running the submitted ~\goodscript.
-As results match for Resolved Count but not for Unresolved Count, Figure~\ref{f:judge_execution_example_3}~informs the agent that the result matches for the Resolved Count but not for Unresolved Count.
-This guides the agents for the successful parts but not give away the expected the results for the unsuccessful parts.
-
-In addition, we allow the agents to submit and get the feedback from the judging mechanism while they are still running, different from previous work~\cite{super, corebench}.
-This is because:
-(1) There is more room for error in the code generation task; we do not want to punish the agents for generating slightly wrong~\goodscript~although it successfully executed commands to reproduce the results
-(2) Our judging mechanism does not allow the agents to gain hints on the expected results to guess the results.
+Importantly, the judging mechanism reveals which parts of the result the agent got right, but not the parts it got wrong.
+Figure~\ref{f:judge_execution_example}~gives an example of this feedback mechanism.
+Suppose Figure~\ref{f:judge_execution_example_1}~is the expected result of the reproduction, and Figure~\ref{f:judge_execution_example_2}~is the actual result obtained after running the submitted ~\goodscript.
+As results match for Resolved Count but not for Unresolved Count, Figure~\ref{f:judge_execution_example_3}~informs the agent that the result matches for the Resolved Count but not for the Unresolved Count.
+This guides the agents on the successful parts but does not give away the expected results for the unsuccessful parts.
+In addition, we allow the agents to submit and get feedback from the judging mechanism while they are still running.
+This is made possible due to our feedback mechanism, which does not leak the expected results to the agent.
 
 \subsubsection{LLM-Based Judging of Reproduction Method}
 \label{s:judge_llm}
 
-Even if the submitted~\goodscript~produces the results that match the expected results, it is still possible that no real reproduction is performed and results are obtained through inappropriate means.
+Even if the submitted~\goodscript~produces results that match the expected results, it is still possible that no real reproduction is performed and results are obtained through inappropriate means.
 Thus, our second phase of judging adopts an LLM-as-Judge to grade how the reproduction is conducted.
-Judging mechanism classify three categories of the reproduction method:
+The judging mechanism classifies three categories of the reproduction method:
 (1) \copyrepro{}: The submitted script just copies the results without actually reproducing.
-(2) \downrepro{}: The submitted script performs lightweight reproduction using the checked in raw data.
-(3) \fullrepro{}: The submitted script perform the full reproduction possible.
+(2) \downrepro{}: The submitted script performs lightweight reproduction, skipping some time-consuming steps.
+(3) \fullrepro{}: The submitted script performs the full reproduction possible.
 
-Figure~\ref{f:judge_llm_example}~gives example of each variants.
-In Figure~\ref{f:judge_llm_example_1}, the script directly copies the checked in result for submission.
+Figure~\ref{f:judge_llm_example}~gives an example of each variant.
+In Figure~\ref{f:judge_llm_example_1}, the script directly copies the checked-in result for submission.
 Our judging mechanism judges that this script is~\copyrepro, as there is no actual reproduction performed.
-Warning is also given to the agent that no credit will be given with this submission.
+A warning is also given to the agent that no credit will be given with this submission.
 In Figure~\ref{f:judge_llm_example_2}, the script uses checked-in raw data to process it to generate results.
-Although this still fall short of the full reproduction, we judge this to be a still valid reproduction.
-This is because the full reproduction of the given experiment takes few hundred hours and checking if the analysis result of the checked-in raw data match the paper result is still valuable.
-In Figure~\ref{f:judge_llm_example_3}, the script does the full reproduction from raw data generation to analysis on one example.
+Although this still falls short of full reproduction, we judge this to be a valid reproduction.
+This is because the full reproduction of the given experiment takes a few hundred hours, and checking if the analysis result of the checked-in raw data matches the paper result is still valuable.
+In Figure~\ref{f:judge_llm_example_3}, the script does the full reproduction from raw data generation to perform analysis on one example.
 This is the ideal case, especially if it can be achieved within a reasonable time.
 
 \begin{figure}[t]
   \centering
   \begin{subfigure}[t]{1\textwidth}
     \begin{minted}[fontsize=\scriptsize, breaklines=true]{bash}
-# Section 3: Formatting and submission block
 cat artifact/InvCon+/results.txt > /workspace/repro.txt
     \end{minted}
     \caption{Example~\copyrepro{}~scripts.}
@@ -254,7 +271,6 @@ cat artifact/InvCon+/results.txt > /workspace/repro.txt
   \hfill
   \begin{subfigure}[t]{1\textwidth}
     \begin{minted}[fontsize=\scriptsize, breaklines=true]{bash}
-# Section 3: Formatting and submission block
 docker-compose run pmsat python parse_all_results_timeouts.py benchmarkingset-rc2-results > /workspace/repro.txt
     \end{minted}
     \caption{Example~\downrepro{}~scripts.}
@@ -264,7 +280,6 @@ docker-compose run pmsat python parse_all_results_timeouts.py benchmarkingset-rc
   \hfill
   \begin{subfigure}[t]{1\textwidth}
     \begin{minted}[fontsize=\scriptsize, breaklines=true]{bash}
-# Section 3: Formatting and submission block
 docker-compose run pmsat /bin/bash -c "cd /pmsat-inference && python -m pip install 'numpy<2' && python run_pmsat_on_traces.py examples-results/ping_pong_example/info.json -nmax 7 && MPLBACKEND=Agg python parse_single_run_results.py TRACE-results/92e710ef352c4739cd7569794272588a" > /workspace/repro.txt
     \end{minted}
     \caption{Example~\fullrepro{}~scripts.}
@@ -275,7 +290,7 @@ docker-compose run pmsat /bin/bash -c "cd /pmsat-inference && python -m pip inst
   \label{f:judge_llm_example}
 \end{figure}
 
-\section{Implementation}
+\subsection{Implementation}
 \label{s:implementation}
 
 \paragraph{Agent Framework and LLM Model Choice}
@@ -287,5 +302,5 @@ Although mini-swe-agent supports any models supported by LiteLLM~\cite{litellm},
 
 Initially, the agents were given the judge tool to self-grade the submissions themselves.
 This led to undesirable results as agents could access the expected results themselves, leaking the results.
-Thus, in our implementation, we use a client-server architecture that the agents use Submit tool to submit the script to the server, whereas the Judge tool is the server that receives the incoming submitted script, grades the submission following the method described in Section~\ref{s:judge}, and returns the results to the Submit tool.
+Thus, in our implementation, we use a client-server architecture where the agents use the Submit tool to submit the script to the server, whereas the Judge tool is the server that receives the incoming submitted script, grades the submission following the method described in Section~\ref{s:judge}, and returns the results to the Submit tool.
 This prevents the leakage issue.
