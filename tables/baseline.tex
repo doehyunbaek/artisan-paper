@@ -1,10 +1,26 @@
-\begin{tabular}{lccccc}
+\begin{tabular}{lccccccc}
 \toprule
-ID & Success & Fail & Time & Cost \\
+\multirow{2}{*}{ID} & \multicolumn{2}{c}{Success} & \multicolumn{4}{c}{Failure} & \multirow{2}{*}{\shortstack{Cost}} \\
+\cmidrule(lr){2-3} \cmidrule(lr){4-7}
+ & Full Rep. & Down. Rep. & Copy Res. & Res. Mis. & Run. Err. & Stat. Err. & \\
 \midrule
-swe-agent      & & & & & \\
-mini-swe-agent & & & & & \\
-artisan        & & & & & \\
+
+mini-swe-agent & & & & & & & \\
+\shortstack{-- w/ gpt-5-nano} & & & & & & & \\
+\shortstack{-- w/ gpt-5-mini} & & & & & & & \\
+\shortstack{-- w/ gpt-5.1}   & & & & & & & \\
+
+swe-agent & & & & & & & \\
+\shortstack{-- w/ gpt-5-nano} & & & & & & & \\
+\shortstack{-- w/ gpt-5-mini} & & & & & & & \\
+\shortstack{-- w/ gpt-5.1}   & & & & & & & \\
 \midrule
+
+Artisan & & & & & & & \\
+\shortstack{-- w/ gpt-5-nano} & & & & & & & \\
+\shortstack{-- w/ gpt-5-mini} & & & & & & & \\
+\shortstack{-- w/ gpt-5.1}   & & & & & & & \\
+\midrule
+
 \bottomrule
 \end{tabular}

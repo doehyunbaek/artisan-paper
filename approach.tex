@@ -58,16 +58,18 @@ artisan judge repro.txt # Section 2.4: Judge tool
 
 An LLM agent is an LLM-based system that uses tools to autonomously interact with the environment to achieve a given goal, provided in the form of a user prompt~\cite{DBLP:conf/icse/BouzeniaDP25}.
 Figure~\ref{f:user_prompt} gives an example of a user prompt given to our LLM agent to task it to generate~\goodscript~that reproduces Table 6 of Bouzenia and Pradel~\cite{DBLP:conf/icse/BouzeniaP24}.
+
 As a goal, the LLM agent is given a numerical result to reproduce, albeit with results obfuscated with question marks.
 While developing our approach, we found that giving the results unobfuscated led to the undesirable behavior of directly copying the given results.
 By giving results in an obfuscated form, we instruct LLM agents on what to reproduce but not on what the expected values are.
 In addition, the content of the paper is provided to the agent, with the results to reproduce obfuscated as well.
+
 As a workflow, the LLM agent is provided with a series of steps that should be taken to reproduce a numerical result from the research paper.
 We only provide high-level objectives that should be taken at each step, and the LLM agent autonomously executes actions to achieve these objectives.
 The five-step workflow provided to the agent is modeled after how researchers would tackle the problem of reproducing research artifacts themselves.
-
 The last step of the workflow, authoring the reproduction script, is the key distinction of our approach compared to existing work.
 As we try to automate the artifact evaluation by tasking LLM agents to generate~\goodscript{}, we provide a script template that agents should follow to guide the generation.
+
 Figure~\ref{f:script_template} shows the script template we provide.
 First, agents should fetch the artifact from different artifact repositories.
 We provide the Get tool (Section~\ref{s:get}) to offer a unified interface to the artifact repositories.
@@ -161,7 +163,7 @@ Executing Group 1
 Even after an agent has successfully reproduced research results by running a series of commands, the outputs of the commands are usually not exactly the same as what is presented in the paper.
 Some artifacts also provide scripts that process these execution outputs into the format used in the paper, but many artifacts do not.
 Of course, an LLM agent can try to write the missing processing script itself, but we found that it struggles to write such scripts in many cases.
-Often, an LLM successfully ran commands necessary to reproduce the research results but could not get the correct score from the judge because the formatting of the execution outputs was inadequate.
+Often, an LLM agent successfully ran commands necessary to reproduce the research results but could not get the correct score from the judge because the formatting of the execution outputs was inadequate.
 
 To address this, we implement the Format tool, which is an LLM-based formatter that takes an obfuscated results and execution log as input and outputs a formatted results.
 Figure~\ref{f:format_input} shows an example input that is passed to the Format tool.
@@ -176,8 +178,8 @@ In previous work developing output-based agents~\cite{super, corebench}, we foun
 (1) The agents do not get feedback on their submission while they are working on the problem.
 This becomes problematic in our case, as generating code that reproduces the result is a more complex problem and has more room for error than outputting just the result.
 (2) How the agents obtain the output is not judged.
-We observe many~\fastpath~that agents take while attempting to reproduce the result (Section~\ref{s:fastpath}), and judging proper consideration of this phenomenon is important for the accurate assessment of the LLM agents' capabilities.
-Thus, we propose a two-tier judging system which addresses both problems: execution-based judging of the submission (Section~\ref{s:judge_execution})~and LLM-based judging of the reproduction method (Section~\ref{s:judge_llm}).
+We observe many~\fastpath~that agents take while attempting to reproduce the result (Section~\ref{s:fastpath}), and proper consideration of this phenomenon is important for the accurate assessment of the LLM agents' capabilities.
+Thus, we propose a two-tier judging system which addresses both problems: execution-based judging of the code output (Section~\ref{s:judge_execution})~and LLM-based judging of the reproduction method (Section~\ref{s:judge_llm}).
 
 \subsubsection{Execution-Based Judging of Reproduction Scripts}
 \label{s:judge_execution}
