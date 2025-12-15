@@ -15,19 +15,39 @@
 \usepackage{hyperref}
 \usepackage{minted}
 
-\begin{CCSXML}
-<ccs2012>
-   <concept>
-       <concept_id>10011007.10011006.10011073</concept_id>
-       <concept_desc>Software and its engineering~Software maintenance tools</concept_desc>
-       <concept_significance>500</concept_significance>
-       </concept>
- </ccs2012>
-\end{CCSXML}
-\ccsdesc[500]{Software and its engineering~Software maintenance tools}
-\keywords{Artifact Evaluation, LLM agents, Benchmarks}
+\settopmatter{printacmref=false}
+\renewcommand\footnotetextcopyrightpermission[1]{}
+\setcopyright{none}
+% \begin{CCSXML}
+% <ccs2012>
+%    <concept>
+%        <concept_id>10011007.10011006.10011073</concept_id>
+%        <concept_desc>Software and its engineering~Software maintenance tools</concept_desc>
+%        <concept_significance>500</concept_significance>
+%        </concept>
+%  </ccs2012>
+% \end{CCSXML}
+% \ccsdesc[500]{Software and its engineering~Software maintenance tools}
+% \keywords{Artifact Evaluation, LLM agents, Benchmarks}
 
 \begin{document}
+
+\author{Doehyun Baek}
+\email{doehyunbaek@gmail.com}
+\orcid{0009-0004-0117-1060}
+\affiliation{
+  \institution{University of Stuttgart}
+  \city{Stuttgart}
+  \country{Germany}
+}
+\author{Michael Pradel}
+\orcid{0000-0003-1623-498X}
+\email{michael@binaervarianz.de}
+\affiliation{
+  \institution{CISPA Helmholtz Center for Information Security}
+  \city{Stuttgart}
+  \country{Germany}
+}
 
 \newcommand\approach{Artisan}
 \newcommand\benchmark{Artisan-Bench}
@@ -36,9 +56,9 @@
 \newcommand\newbug{paper-artifact inconsistencies}
 \newcommand\fastpath{fast-path}
 
-\newcommand\copyrepro{Copy Results}:
-\newcommand\downrepro{Downstream Reproduction}:
-\newcommand\fullrepro{Full Reproduction}:
+\newcommand\copyrepro{Copy Results}
+\newcommand\downrepro{Downstream Reproduction}
+\newcommand\fullrepro{Full Reproduction}
 
 \newcommand\papersetsize{23}
 \newcommand\tablesetsize{61}
@@ -54,23 +74,22 @@
 Artifact evaluation has become a standard practice in the research community to ensure the reproducibility of research results.
 However, the current process remains notoriously labor-intensive.
 To mitigate this, recent work has explored using LLM agents to automatically reproduce research results.
-However, these approaches mostly frame the problem as an output prediction task, which (1) ignores how the output is obtained and (2) cannot distinguish between agent errors and artifact errors when results mismatch.
-To address this, we present \approach, an automated artifact evaluation approach that frames the task as a code generation task.
+However, these approaches mostly frame the problem as an output prediction task, which (1) cannot distinguish between agent errors and artifact errors when results mismatch and (2) ignores how the output is obtained.
+To address this, we present \approach, an automated artifact evaluation approach utilizing an LLM agent that frames the task as a code generation task.
 Given a numerical result from a paper, \approach~autonomously takes actions to reproduce the result.
 Subsequently, \approach~encapsulates this knowledge into a \emph{\goodscript}, which can be run independently to reproduce the results.
+If the results mismatch, it could be that the error stems from either the paper or the artifact, which we term \emph{\newbug}.
 If the results match, our judging mechanism uses an LLM-as-Judge to evaluate the completeness of the reproduction.
 This mechanism precludes trivial~\goodscript~that merely copies checked-in results, which we term \emph{\fastpath}.
-If the results mismatch, it could be that the error is on the side of either the paper or the artifact, which we term \emph{\newbug}.
-To evaluate \approach, we introduce \benchmark, a new benchmark evaluating LLM agents' capabilities to generate \goodscript.
+To evaluate \approach, we introduce \benchmark, a new benchmark assessing LLM agents' capabilities to generate \goodscript.
 \benchmark~comprises 61 tasks derived from 23 Software Engineering papers.
 All tasks in \benchmark~are manually validated for reproducibility and cover diverse software engineering techniques and programming languages.
 Our experiments show that \approach~is effective, producing \goodscripttsize{} new \goodscript{}~and outperforming the baseline by \goodscripttsizeoutperform{}$\times$.
-Furthermore, applying \approach~to~\benchmark~uncovered~\fastpathsize~\fastpath{}~and \newbugsize~\newbug{}, demonstrating the strength of our approach.
+Furthermore, applying \approach~to~\benchmark~uncovered~\newbugsize~\newbug~and~\fastpathsize~\fastpath, demonstrating the strength of our approach.
 \end{abstract}
 \maketitle
 
 \input{intro}
-\input{background}
 \input{approach}
 \input{benchmark}
 \input{evaluation}

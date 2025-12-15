@@ -1,16 +1,16 @@
 \section{Introduction}
 \label{s:introduction}
 
-Since the pilot of artifact evaluation at ESEC/FSE 2011, artifact evaluation has become standard practice in computer science, being adopted in software engineering~\cite{DBLP:conf/sigsoft/Hermann0S20}, programming languages~\cite{DBLP:journals/cacm/KrishnamurthiV15}, security~\cite{DBLP:conf/ccs/OlszewskiLSWKPU23}, and database communities~\cite{DBLP:journals/sigmod/AthanassoulisTA22}.
-One of its main goals is reproducibility, defined as obtaining similar experimental outcomes with the same experimental setup by a different team~\cite{acm-artifact-badging-v1_1}.
+Since the pilot of artifact evaluation at ESEC/FSE 2011, artifact evaluation has become standard practice in computer science, having been adopted in the software engineering~\cite{DBLP:conf/sigsoft/Hermann0S20}, programming languages~\cite{DBLP:journals/cacm/KrishnamurthiV15}, security~\cite{DBLP:conf/ccs/OlszewskiLSWKPU23}, and database communities~\cite{DBLP:journals/sigmod/AthanassoulisTA22}.
+One of its main goals is reproducibility, defined as the ability of a different team to obtain similar experimental outcomes using the same experimental setup~\cite{acm-artifact-badging-v1_1}.
 Reproducibility is generally regarded by participants as one of the most important goals of artifact evaluation~\cite{DBLP:conf/sigsoft/Hermann0S20}.
 In addition, studies report that artifact evaluation leads to more available, maintained, and documented artifacts~\cite{DBLP:conf/se/0001T0C0H024}.
 
 Despite these benefits, artifact evaluation in its current form is notoriously labor-intensive.
-Reports indicate that evaluating a single artifact can take eight to ten hours, often more than reviewing a paper~\cite{DBLP:journals/ieeesp/Hermann22}.
-In addition, the current artifact evaluation results in the \emph{Artifacts Evaluated} badge as an outcome of the process\cite{acm-artifact-badging-v1_1}.
-This serves only as a coarse-grained assessment of the reproducibility of the whole artifact and only a one-time assessment of reproducibility at a specific point in time.
-In fact, recent work on the reproducibility of artifacts~\cite{DBLP:journals/corr/abs-2510-25506} points out that even artifacts that have been awarded the \emph{Artifacts Evaluated} badge are not reproducible after one year.
+Reports indicate that evaluating a single artifact can take eight to ten hours, often longer than reviewing the paper itself~\cite{DBLP:journals/ieeesp/Hermann22}.
+Moreover, the current process yields the \emph{Artifacts Evaluated} badge as its outcome~\cite{acm-artifact-badging-v1_1}.
+This serves only as a coarse-grained assessment of the whole artifact and represents a one-time assessment at a specific point in time.
+In fact, recent work on the reproducibility of artifacts~\cite{DBLP:journals/corr/abs-2510-25506} indicates that even artifacts awarded the \emph{Artifacts Evaluated} badge often fail to remain reproducible even one year later.
 
 \begin{table}[t]
 \caption{Comparison of existing approaches and Artisan}
@@ -29,42 +29,41 @@ Detects Fast-Path             &            &            &            & \checkmar
 \end{tabularx}
 \end{table}
 
-To address this, recent work explores applying LLM agents to the task of automatically reproducing research results.
-These approaches can be classified in terms of the output of the LLM agents.
-Rating-based agents~\cite{reprobench,heye} output how reproducible the artifact is in terms of a score.
-However, the assessment is still coarse-grained; there is no information on which specific claim is reproducible or not.
-Output-based agents~\cite{super, corebench} output the numerical results they reproduced, giving a fine-grained assessment of reproducibility.
-Still, like rating-based agents, when these agents fail to reproduce research results, it is unclear whether the error lies with the agent or the artifact.
-As agents are an emerging technique, it is easier to attribute the error to the agent.
-To our knowledge, there is no report of errors in artifacts found by agents while attempting reproduction.
+To address this, recent work has explored applying LLM agents to the task of automatically reproducing research results.
+These approaches can be classified based on the agent's output.
+Rating-based agents~\cite{reprobench,heye} output a reproducibility rating.
+However, this assessment still remains coarse-grained; it lacks granular information on which specific results are reproducible.
+Output-based agents~\cite{super, corebench} produce the numerical results they have reproduced, offering a fine-grained assessment.
+Nevertheless, like rating-based agents, when these agents fail to reproduce results, it is unclear whether the error lies with the agent or the artifact.
+Given that agents are an emerging technique, failures are typically attributed to the agent.
+To our knowledge, there are no reports of errors in artifacts identified by agents during reproduction attempts.
 
-Motivated by the current situation, we ask the question: What if we ask LLM agents to generate code that reproduces research results?
-We call this approach \approach, an automated artifact evaluation approach that frames the task as a code generation task.
+Motivated by this limitation, we pose the question: \emph{What if we task LLM agents with generating code that reproduces research results}?
+We call this approach \approach, an automated artifact evaluation approach utilizing an LLM agent that frames the task as code generation.
 Given a numerical result from a research paper, \approach~autonomously takes actions to reproduce the result.
-To aid the process, we provide a set of tools specialized to improve the domain-specific task of artifact evaluation.
-Subsequently, \approach~encapsulates this knowledge into a \emph{\goodscript}, which can be run independently to reproduce research results.
-If the results match, our judging mechanism also evaluates \goodscript{}~on how the result is obtained, by using an LLM-as-Judge that evaluates the completeness of the reproduction.
-This mechanism precludes trivial~\goodscript s~that merely copy the checked-in research results, which we call \emph{\fastpath}.
-If the results mismatch, it could be that the error is on the side of either the paper or the artifact, which we call \emph{\newbug}.
-The presence of a \goodscript, which runs independently of the LLM, acts as credible evidence if this is the case.
+To facilitate this process, we provide a set of tools specialized for the domain-specific task of artifact evaluation.
+Subsequently, \approach~encapsulates this knowledge into a \emph{\goodscript}, which can be run independently to reproduce the research results.
+If the results mismatch, it could be that the error stems from either the paper or the artifact, a scenario we term \emph{\newbug}.
+The presence of a \goodscript, which runs independently of the LLM agent, acts as credible evidence in such cases.
+If the results match, our judging mechanism validates the~\goodscript{}~based on how the result was obtained, utilizing an LLM-as-Judge to evaluate the completeness of the reproduction.
+This mechanism precludes trivial~\goodscript~that merely copy the checked-in research results, a behavior we term \emph{\fastpath}.
 
-In addition, \approach~has the following advantages:
-(1) It gives a fine-grained reproduction of a specific result.
-Each \goodscript~that \approach~produces reproduces only the result that it is tasked with, making it clear which claim is reproduced.
-(2) Once produced, \goodscript~can run independently of \approach.
-This removes the possibility of agent error in reproduction, opening up the possibility of catching actual errors in the artifacts.
-(3) Reproduction script can be run multiple times in the future at a much lower cost.
-No manual evaluation or LLM agent is required to rerun the \goodscript.
 
-To evaluate \approach, we develop \benchmark, a new benchmark that evaluates LLM agents' capabilities to generate \goodscript.
+In addition, \approach~offers the following advantages:
+(1) It provides a fine-grained reproduction of specific results.
+Each \goodscript~produced by \approach~targets only the specific result it is tasked with, making it clear which result is reproduced.
+(2) Once produced, the \goodscript~can run independently of \approach.
+This eliminates the possibility of agent error in reproduction, enabling the detection of actual errors in the artifacts.
+(3) The reproduction script can be executed multiple times in the future at a significantly lower cost, as no manual evaluation or LLM agent is required to rerun the \goodscript.
+
+To evaluate \approach, we develop \benchmark, a new benchmark assessing LLM agents' capabilities in generating \goodscript.
 \benchmark~comprises 61 tasks derived from 23 Software Engineering papers.
 All tasks in \benchmark~are manually validated for reproducibility, and the benchmark offers the following advantages compared to existing ones:
 (1) \benchmark~targets the reproduction of tables extracted from research papers as-is.
-Only non-deterministic or time-consuming parts are filtered out to get the partial table for the subsets.
-This differs from previous benchmarks that handcraft results suitable for reproduction.
-(2) \benchmark~covers diverse software engineering techniques (e.g., Empirical Study, Security, Fuzzing, Static Analysis, Dynamic Analysis) and programming languages (Python, Java, Rust, OCaml, Scala, Bash, C).
-This differs from previous benchmarks limited in both software engineering techniques (ML / NLP) and programming languages (Python, R, and Stata).
-(3) \benchmark~covers reproduction tasks that take significantly longer (eight hours), extending the scope that benchmarks cover.
+This differs from previous benchmarks that rely on handcrafted results suitable for reproduction.
+(2) \benchmark~covers diverse software engineering techniques and programming languages.
+This contrasts with previous benchmarks limited in both software engineering techniques (ML / NLP) and programming languages (Python, R, and Stata).
+(3) \benchmark~includes reproduction tasks that require significant time (up to eight hours), extending the scope covered by standard benchmarks.
 
 \begin{table}[t]
 \caption{Comparison of prior benchmarks and \benchmark. ML: Machine Learning. NLP: Natural Language Processing. CS: Computer Science. SS: Social Science. Med: Medicine. SE: Software Engineering.}
@@ -90,13 +89,13 @@ Time Limit & 10 minutes & 45 minutes & 2 hours & 8 hours \\
 \end{table}
 
 We evaluate \approach~on \benchmark, showing that \approach~is effective, producing \goodscripttsize{} \goodscript s and outperforming the baseline by \goodscripttsizeoutperform{}$\times$.
-In the process, we uncovered \newbugsize~inconsistencies between papers and artifacts and \fastpathsize~fast paths where agents obtain results without genuine reproduction, demonstrating the strength of our approach.
+In the process, we uncovered \newbugsize~inconsistencies between papers and artifacts, as well as \fastpathsize~fast paths where agents obtain results without genuine reproduction, demonstrating the strength of our approach.
 
 In summary, this paper contributes the following:
 \begin{itemize}
     \item Artisan, an LLM agent that automates artifact evaluation through code generation.
     \item \benchmark, a benchmark that evaluates the code generation capabilities of LLM agents to reproduce Software Engineering papers.
     \item Empirical evaluation showing that Artisan generates \goodscripttsize{} new \goodscript{}, outperforming the baseline by \goodscripttsizeoutperform{}$\times$.
-    \item Insights that automated artifact evaluation through code generation can reveal paper-artifact inconsistencies and fast-paths taken by agents.
+    \item Insights demonstrating that automated artifact evaluation through code generation can reveal paper-artifact inconsistencies and fast-paths taken by agents.
     \item Publicly available Artisan and \benchmark: https://github.com/doehyunbaek/artisan
 \end{itemize}
