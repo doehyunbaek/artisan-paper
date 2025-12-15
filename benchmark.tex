@@ -9,12 +9,12 @@ We first state the requirements we target (Section~\ref{s:requirements}), then d
 
 We impose two core requirements on \benchmark.
 (1) Tasks should closely reflect real-world artifact evaluation so that performance on the benchmark generalizes to practical use.
-This addresses limitations of prior benchmarks~\cite{super,corebench,reprobench}, which we find do not fully mirror artifact evaluation as practiced in the computer science research.
+This addresses limitations of prior benchmarks~\cite{super,corebench,reprobench}, which we find do not fully mirror artifact evaluation as practiced in computer science research.
 (2) Manual validation is required.
-Although SWE-Bench~\cite{jimenez2024swebench} is influential for evaluating LLMs on real software engineering issues, subsequent efforts such as SWE-Bench Verified~\cite{chowdhury2024swebenchverified} and~\cite{DBLP:journals/corr/abs-2503-15223} highlight the importance of human verification to avoid overestimating or underestimating agent capabilities.
+Although SWE-Bench~\cite{jimenez2024swebench} is influential for evaluating LLMs on real software engineering issues, subsequent efforts such as SWE-Bench Verified~\cite{chowdhury2024swebenchverified} and Wang et al.~\cite{DBLP:journals/corr/abs-2503-15223} highlight the importance of human verification to avoid overestimating or underestimating agent capabilities.
 These requirements introduce trade-offs.
 For example, the task suite must be broad enough to cover diverse use cases yet small enough to permit manual validation.
-Further, very large tasks increase time and monetary cost, which can be prohibitive for resource-constrained academic groups~\cite{DBLP:conf/iclr/ChanCJASMSLMPMW25}.
+Further, a very large task set size increases time and monetary costs, which can be prohibitive for resource-constrained academic groups~\cite{DBLP:conf/iclr/ChanCJASMSLMPMW25}.
 
 \subsection{Paper Selection}
 \label{s:paper_select}
@@ -70,27 +70,27 @@ To implement this, we search Python files and Jupyter notebooks for ``openai'' o
 We also search Markdown files for ``etherscan''.
 This excludes seven papers using OpenAI APIs and two papers using Etherscan APIs.
 % .\footnote{\url{https://github.com/doehyunbaek/artisan/blob/bc7e6cd/evaluation/select_papers.py\#L276}}
-(4) We exclude 19 paprs that require GPUs or specialized hardware.
+(4) We exclude 19 papers that require GPUs or specialized hardware.
 This is to maintain accessibility across hardware setups.
 We search for common GPU keywords (e.g., \texttt{cuda}, \texttt{cudnn}, \texttt{tensorflow}, \texttt{nvidia-smi}, \texttt{gpus}) while ignoring non-code extensions (e.g., \texttt{.txt}, \texttt{.csv}, \texttt{.json}, \texttt{.log}).
 % \footnote{\url{https://github.com/doehyunbaek/artisan/blob/bc7e6cd/evaluation/select_papers.py\#L312}}
-This aligns with previous work~\cite{super} that exclude papers that require GPU use due to cost.
-(5) We exclude twelve papers that require more than eight hours.
+This aligns with previous work~\cite{super} that excludes papers that require GPU use due to cost.
+(5) We exclude twelve papers that require more than eight hours to reproduce.
 We search the paper and artifact for the keyword ``hour'' and exclude papers that explicitly mention experiment time beyond eight hours.
-Out of twelve papers excluded, seven papers take more than 24 hours, four papers take more than 12 hours, and one paper takes more than 125 hours.
-This time requirement is much higher than the previous work (10 minutes for \cite{super}) which might make the evaluation longer.
-We motivate this decision to cover diverse software engineering techniques, where many takes hours of compute to output meaningful outcome, even partial ones.
+Out of twelve papers excluded, four papers take more than 12 hours, seven papers take more than 24 hours, and one paper takes more than 125 hours.
+This time requirement is much higher than previous work (10 minutes for \cite{super}), which might make the evaluation longer.
+We motivate this decision by the need to cover diverse software engineering techniques, where many take hours of compute to output meaningful outcomes, even partial ones.
 (6) Finally, we exclude nine papers that we could not manually reproduce within an eight-hour budget.
-Out of nine papers excluded, two are excluded as most of the evaluation dataset is missing, two are excluded as raw data is missing, two are excluded as script to generate results from raw data are missing, two are excluded as the outputs are non-deterministic, and one is excluded as docker image mentioned in the artifact is no longer accessible.
+Out of the nine papers excluded, two are excluded because most of the evaluation dataset is missing, two because raw data is missing, two because the script to generate results from raw data is missing, two because the outputs are non-deterministic, and one because the Docker image mentioned in the artifact is no longer accessible.
 
 Table~\ref{t:paper_distribution} shows the distribution of software engineering techniques and programming languages covered by our paper selection.
-For software engineering techniques, there is a diverse selection of software engineering techniques.
-Papers in the Others include one for Fuzzing, one for Mutation Testing, one for Model-based Testing, one for Mobile Applications, one for Program Repair, one for Test Automation, and one for AI for Software Engineering.
-One notable exception is a possible under-representation of AI4SE and SE4AI techniques.
+For software engineering techniques, \benchmark~covers diverse techniques not covered by existing benchmarks.
+Papers in the ``Others'' category include one each for Fuzzing, Mutation Testing, Model-based Testing, Mobile Applications, Program Repair, Test Automation, and AI for Software Engineering.
+One thing to note is a possible under-representation of AI4SE and SE4AI techniques.
 This is mainly due to our exclusion of papers using non-public APIs and GPUs.
-Still, there is one paper~\cite{DBLP:conf/kbse/LeeJL24} which makes use of classical machine learning technique (Random forest and XGBoost) which does not make use of either non-public APIs and GPUs.
+Still, there is one paper~\cite{DBLP:conf/kbse/LeeJL24} that makes use of classical machine learning techniques (Random Forest and XGBoost) and does not use either non-public APIs or GPUs.
 For programming languages, Python is the most prevalent, comprising 57\% of the papers.
-However, there is a sizable representation of other languages, notably Java, Rust, Ocaml, Scala, C, and even Bash, which were not covered in the previous benchmarks~~\cite{super, corebench, reprobench}.
+However, there is a sizable representation of other languages, notably Java, Rust, OCaml, Scala, C, and even Bash, which were not covered in previous benchmarks~\cite{super, corebench, reprobench}.
 
 \subsection{Task Selection}
 \label{s:task_select}
@@ -105,7 +105,7 @@ However, there is a sizable representation of other languages, notably Java, Rus
     \midrule
     Total number of tables & 89 \\
     Exclude non-results & 68 \\
-    Exclude missing codes & 62 \\
+    Exclude missing code & 62 \\
     Exclude non-deterministic only & \tablesetsize \\
     \bottomrule
   \end{tabular}
@@ -122,30 +122,60 @@ However, there is a sizable representation of other languages, notably Java, Rus
     Consistent Table    & 38 & Original Table  & 41 \\
     Inconsistent Table  & 23 & Partial Table   & 20 \\
     \midrule
-    \textbf{Total}              & \textbf{\tablesetsize} & \textbf{Total} & \textbf{\textbf{\tablesetsize} } \\
+    \textbf{Total}              & \textbf{\tablesetsize} & \textbf{Total} & \textbf{\tablesetsize} \\
     \bottomrule
   \end{tabular}
 \end{table}
 
-From \papersetsize~papers selected, we curate \tablesetsize~tasks that is given to LLM agents as a single task instance.
-We start with 89 tables that are contained in the~\papersetsize~papers.
-(1) We exclude 21 non-results tables.
-Out of 21 non-result tables excluded, 14 tables contain description of evaluation setups, 7 tables contain the descriptions of the approach.
-(2) We exclude six tables that were missing codes to reproduce the results.
-For all six tables, codes reproducing the other parts of the experiment is present but the code for some of the parts are missing.
-(3) We exclude one table that only contain the non-deterministic result.
+From the \papersetsize~papers selected, we curate \tablesetsize~tasks that are given to LLM agents as a single task instance.
+We start with 89 tables contained in the~\papersetsize~papers.
+(1) We exclude 21 non-result tables.
+Out of the 21 non-result tables excluded, 14 tables contain descriptions of evaluation setups, and 7 tables contain descriptions of the approach.
+(2) We exclude six tables that were missing code to reproduce the results.
+For all six tables, code reproducing the other parts of the experiment is present, but the code for some parts is missing.
+(3) We exclude one table that only contains non-deterministic results.
 For PPT4J~\cite{DBLP:conf/icse/Pan00Z0024}, Table 3, the table reports only the time consumption of the approaches.
-As~\approach~do not handle non-deterministic results such as time consumption, we exclude this table.
-For the remaining~\tablesetsize~tasks, we reproduce the tables and obtain ground truths scripts that reproduce the table.
+As~\approach~does not handle non-deterministic results such as time consumption (Section~\ref{s:limitations}), we exclude this table.
+For the remaining~\tablesetsize~tasks, we reproduce the tables and obtain ground truth scripts that reproduce the table.
 
-Table~\ref{t:task_distribution} shows the distribution of paper-artifact inconsistencies found, the degree to the tables are original, and the kind of reproduction of ground truth scripts.
-23 tables that we use for the benchmark are different with the table in the paper.
-For 19, it is because of~\newbug~that we found, which we discuss in detail in Section~\ref{s:inconsistencies}.
-For three, it is because the paper authors claim the results of the artifact could be slightly different with that of the paper~\cite{DBLP:journals/pacmse/Song0LCR24} and for one, it is because the implementation used for the paper~\cite{DBLP:conf/kbse/Bock0C24} contains a bug, which is fixed now.
+Table~\ref{t:task_distribution} shows whether the tables used for the tasks are consistent or partial with respect to the tables in the paper.
+23 tables that we use for the benchmark are inconsistent with the table in the paper.
+For 19 tasks, this is due to~\newbug~that we found, which we discuss in detail in Section~\ref{s:inconsistencies}.
+For three, it is because the paper authors claim the results of the artifact could be slightly different from those in the paper~\cite{DBLP:journals/pacmse/Song0LCR24}, and for one, it is because the implementation used for the paper~\cite{DBLP:conf/kbse/Bock0C24} contains a bug, which is fixed now.
 20 tables that we use for the benchmark contain partial entries compared to the table in the paper.
 For 15, we could only partially reproduce the results of the original table with our ground truth scripts.
-For 5, we exclude the parts where the output is nondeterministic.
+For 5, we exclude the parts where the output is non-deterministic.
+
 
 % \textbf{Ground Truth Kind} & \textbf{Tasks} \\
 % & Full Reproduction       & 31 \\
 % & Downstream Reproduction & 30 \\
+
+% \begin{figure}[t]
+%   \centering
+%   \begin{minted}{bash}
+% #!/usr/bin/bash
+% # Section 1: Write the expected table to /workspace/expected.md
+% cat > /workspace/expected.md << 'EOTABLE'
+% **Table 2. Ping-pong server: dominant reachable states, glitches, and frequency statistics.**
+
+% | (n) | (n_{reach}) | # Glitches | Mean (\delta_g) fr. | Max (\delta_g) fr. | Min (\delta) fr. |
+% | --: | ----------: | ---------: | ------------------: | -----------------: | ---------------: |
+% |   3 |           ? |         ?? |                ?.?? |                 ?? |               ?? |
+% |   4 |           ? |          ? |                ?.?? |                  ? |               ?? |
+
+% EOTABLE
+% # Section 2: Download and extract the artifact
+% artisan get https://zenodo.org/records/10423670
+% # Section 3: Run the commands to reproduce the results
+% # Use docker-compose to run the pmsat container, ensure numpy<2 for compatibility, run mining and parse to produce /workspace/repro.txt
+% docker-compose -f pmsat-inference-and-publication-artifacts/pmsat-inference/docker-compose.yml run --rm pmsat /bin/bash -c "cd /pmsat-inference && python -m pip install 'numpy<2' && python run_pmsat_on_traces.py examples-results/ping_pong_example/info.json -nmax 7 && MPLBACKEND=Agg python parse_single_run_results.py TRACE-results/92e710ef352c4739cd7569794272588a" > /workspace/repro.txt
+% # Section 4: Format the result into the expected table with artisan format and surround with the required <artisan_submit> block
+% echo '<artisan_submit>'
+% artisan format --expected /workspace/expected.md --repro /workspace/repro.txt
+% echo '</artisan_submit>'
+%   \end{minted}
+%   \caption{Example~\goodscript~generated by~\approach.}
+%   \Description{Example~\goodscript~generated by~\approach.}
+%   \label{f:good_script}
+% \end{figure}
