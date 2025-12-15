@@ -106,6 +106,7 @@ However, there is a sizable representation of other languages, notably Java, Rus
     Total number of tables & 89 \\
     Exclude non-results & 68 \\
     Exclude missing code & 62 \\
+    Exclude excessive hardware & 61 \\
     Exclude non-deterministic only & \tablesetsize \\
     \bottomrule
   \end{tabular}
@@ -119,8 +120,8 @@ However, there is a sizable representation of other languages, notably Java, Rus
     \toprule
     \textbf{Consistency} & \textbf{Tasks} & \textbf{Original Tables} & \textbf{Tasks} \\
     \midrule
-    Consistent Table    & 38 & Original Table  & 41 \\
-    Inconsistent Table  & 23 & Partial Table   & 20 \\
+    Consistent Table    & 37 & Original Table  & 41 \\
+    Inconsistent Table  & 23 & Partial Table   & 19 \\
     \midrule
     \textbf{Total}              & \textbf{\tablesetsize} & \textbf{Total} & \textbf{\tablesetsize} \\
     \bottomrule
@@ -133,7 +134,8 @@ We start with 89 tables contained in the~\papersetsize~papers.
 Out of the 21 non-result tables excluded, 14 tables contain descriptions of evaluation setups, and 7 tables contain descriptions of the approach.
 (2) We exclude six tables that were missing code to reproduce the results.
 For all six tables, code reproducing the other parts of the experiment is present, but the code for some parts is missing.
-(3) We exclude one table that only contains non-deterministic results.
+(3) We exclude one table that requires 400GB of Ram to reproduce (Table 3 of Unimocg\cite{DBLP:conf/se/HelmRKRM25}).
+(4) We exclude one table that only contains non-deterministic results.
 For PPT4J~\cite{DBLP:conf/icse/Pan00Z0024}, Table 3, the table reports only the time consumption of the approaches.
 As~\approach~does not handle non-deterministic results such as time consumption (Section~\ref{s:limitations}), we exclude this table.
 For the remaining~\tablesetsize~tasks, we reproduce the tables and obtain ground truth scripts that reproduce the table.
@@ -142,9 +144,9 @@ Table~\ref{t:task_distribution} shows whether the tables used for the tasks are 
 23 tables that we use for the benchmark are inconsistent with the table in the paper.
 For 19 tasks, this is due to~\newbug~that we found, which we discuss in detail in Section~\ref{s:inconsistencies}.
 For three, it is because the paper authors claim the results of the artifact could be slightly different from those in the paper~\cite{DBLP:journals/pacmse/Song0LCR24}, and for one, it is because the implementation used for the paper~\cite{DBLP:conf/kbse/Bock0C24} contains a bug, which is fixed now.
-20 tables that we use for the benchmark contain partial entries compared to the table in the paper.
+19 tables that we use for the benchmark contain partial entries compared to the table in the paper.
 For 15, we could only partially reproduce the results of the original table with our ground truth scripts.
-For 5, we exclude the parts where the output is non-deterministic.
+For 4, we exclude the parts where the output is non-deterministic.
 
 
 % \textbf{Ground Truth Kind} & \textbf{Tasks} \\

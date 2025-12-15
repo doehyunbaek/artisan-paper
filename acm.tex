@@ -61,7 +61,7 @@
 \newcommand\fullrepro{Full Reproduction}
 
 \newcommand\papersetsize{23}
-\newcommand\tablesetsize{61}
+\newcommand\tablesetsize{60}
 \newcommand\goodscripttsize{46}
 \newcommand\newbugsize{21}
 \newcommand\fastpathsize{38}
@@ -82,7 +82,7 @@ If the results mismatch, it could be that the error stems from either the paper 
 If the results match, our judging mechanism uses an LLM-as-Judge to evaluate the completeness of the reproduction.
 This mechanism precludes trivial~\goodscript~that merely copies checked-in results, which we term \emph{\fastpath}.
 To evaluate \approach, we introduce \benchmark, a new benchmark assessing LLM agents' capabilities to generate \goodscript.
-\benchmark~comprises 61 tasks derived from 23 Software Engineering papers.
+\benchmark~comprises 60 tasks derived from 23 Software Engineering papers.
 All tasks in \benchmark~are manually validated for reproducibility and cover diverse software engineering techniques and programming languages.
 Our experiments show that \approach~is effective, producing \goodscripttsize{} new \goodscript{}~and outperforming the baseline by \goodscripttsizeoutperform{}$\times$.
 Furthermore, applying \approach~to~\benchmark~uncovered~\newbugsize~\newbug~and~\fastpathsize~\fastpath, demonstrating the strength of our approach.
