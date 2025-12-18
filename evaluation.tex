@@ -5,9 +5,9 @@ To evaluate our approach, we answer the following research questions:
 
 \begin{itemize}[labelindent=\parindent,leftmargin=*]
 \item \textbf{RQ1. Effectiveness}:
-How effective is \approach{} at generating reproduction scripts?
+How effective is \approach{} at generating successful reproduction scripts?
 \item \textbf{RQ2. Efficiency}:
-How efficient is \approach{} in terms of time and monetary cost?
+How efficient is \approach{} in terms of execution time and monetary cost?
 \item \textbf{RQ3. Ablation Study}:
 What is the impact of different tools in different configurations?
 \item \textbf{RQ4. Fidelity and Accuracy of LLM-Based Tools}:
@@ -31,11 +31,37 @@ We choose mini-swe-agent for two reasons:
 We also include SWE-agent as an established state-of-the-art approach for general software engineering tasks.
 For both baselines and~\approach, we experiment with gpt-5.1-2025-11-13, gpt-5-mini-2025-08-07, and gpt-5-nano-2025-08-07 as an LLM model.
 
+To adopt mini-swe-agent to the task of~\benchmark, we give the same user prompt as in~\approach, minus the three tools that we present in Section~\ref{s:approach} and remove the validation on exit mechanism introduced in~\ref{s:implementation}.
+We present the diffs of the user prompt between mini-swe-agent and~\approach in Figure~\ref{s:line_diffs}.
+To adopt SWE-agent to the task of~\benchmark, we give the same user prompt as in mini-swe-agent but adds one last instruction to the workflow (``6. Copy the submission script: \verb|cp repro_{{ artifact_name }}_table_{{ table_index }}.sh /root/model.patch|'').
+This is to adopt SWE-agent's hard-coded APR task to our task.
+
+For both baselines and~\approach, we use the step limit of 30 and cost limit of one dollar per task.
+
+\begin{figure}[h]
+\begin{minted}{diff}
+> - `artisan get`: Download and extract the artifact from the official URL.
+> - `artisan format --expected expected.md --repro repro.txt`: Render final tables.
+> - `artisan submit`: Submit your reproduction script for evaluation.
+>    - You MUST use`artisan get {{ artifact_url }}`.
+> artisan get {{ artifact_url }}
+> artisan format --expected expected.md --repro repro.txt
+> chmod +x /workspace/repro_{{ artifact_name }}_table_{{ table_index }}.sh
+> artisan submit /workspace/repro_{{ artifact_name }}_table_{{ table_index }}.sh
+\end{minted}
+\caption{Diff of user prompts between mini-swe-agent and \approach.}
+\Description{Diff of user prompts between mini-swe-agent and \approach.}
+\label{s:line_diffs}
+\end{figure}
+
 \subsubsection{Metrics}
 
-To evaluate effectiveness, we measure the sum of~\fullrepro~scripts and~\downrepro{}~scripts each approach generates.
-For the reproduction method we report, we report the result of the manual validation, not the one reported by the Judge tool (Section \ref{s:judge}).
-To evaluate efficiency, we report total wall-clock time and LLM token cost per task.
+To evaluate effectiveness, we classify the submitted script by the baselines and~\approach into six categories, following the classification introduced in Section~ref{s:judge}.
+For three categories where results of the submitted script fail to match the expected result, we automatically classify them into the three categories based on the execution outputs (Section~\ref{s:judge_execution}).
+For three categories where results of the submitted script match the expected result, we manually classify the type of the reproduction method (Section~\ref{s:judge_llm}).
+For the single metric of effectiveness, we report the sum of~\fullrepro~scripts and~\downrepro{}~scripts each approach generates, which we consider to be successful reproduction.
+To evaluate efficiency, we report total wall-clock time and monetary cost per task.
+Monetary cost includes the cost of the Format tool (Section~\ref{s:format}) and Judge tool (Section~ref{s:judge}).
 To evaluate the fidelity of the Format tool, we measure what percentage of formatted output matches the expected output with the execution log we manually validated to contain all the expected results given as an input.
 To evaluate the accuracy of the Judge tool, we measure what percentage of judgement of reproduction matches with the ground truth reproduction method label we have.
 We repeat RQ4 experiments ten times to account for an LLM non-determinism.

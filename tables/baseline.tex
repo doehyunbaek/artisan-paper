@@ -2,17 +2,17 @@
 \toprule
 \multirow{2}{*}{ID} & \multicolumn{2}{c}{Success} & \multicolumn{4}{c}{Failure} & \multirow{2}{*}{\shortstack{Cost}} \\
 \cmidrule(lr){2-3} \cmidrule(lr){4-7}
- & Full Rep. & Down. Rep. & Copy Res. & Res. Mis. & Run. Err. & Stat. Err. & \\
+ & Full Rep. & Down. Rep. & Copy Res. & Mis. Res. & Run. Err. & Stat. Err. & \\
 \midrule
 
 mini-swe-agent & & & & & & & \\
-\shortstack{-- w/ gpt-5-nano} & & & & & & & \\
-\shortstack{-- w/ gpt-5-mini} & & & & & & & \\
-\shortstack{-- w/ gpt-5.1}   & & & & & & & \\
+\shortstack{-- w/ gpt-5-nano} & 0 & 0 & 0 &  0 &  0 & 60 & \$0.008 \\
+\shortstack{-- w/ gpt-5-mini} & 0 & 0 & 0 & 44 & 14 &  2 & \$0.061 \\
+\shortstack{-- w/ gpt-5.1}    &  & & & & & & \\
 
 swe-agent & & & & & & & \\
-\shortstack{-- w/ gpt-5-nano} & & & & & & & \\
-\shortstack{-- w/ gpt-5-mini} & & & & & & & \\
+\shortstack{-- w/ gpt-5-nano} &  0 & 1 & 0 & 34 & 17 & 8 & \$0.061 \\
+\shortstack{-- w/ gpt-5-mini} & 34 & 0 & 0 & 23 &  4 & 0 & \$0.136 \\
 \shortstack{-- w/ gpt-5.1}   & & & & & & & \\
 \midrule
 

@@ -188,6 +188,7 @@ In our approach, LLM agents generate and submit a shell script that runs indepen
 Given the submission, our execution-based judging mechanism runs the submitted script in a fresh container environment.
 The judging mechanism classifies three cases where the submitted script fails judging in this phase:
 (1) Static Error: when the submitted script fails to run because of a syntax error, the judging mechanism judges the script as a static error and gives the error message as feedback.
+We also consider cases where the script is missing from the expected path as static error.
 (2) Runtime Error: when the submitted script encounters an error while running, the judging mechanism judges the script as a runtime error and returns which command caused the error with the error message.
 (3) Result Mismatch: when the submitted script runs to completion without any error but the result differs from the expected values, the judging mechanism judges the script as a result mismatch.
 
@@ -297,8 +298,15 @@ docker-compose run pmsat /bin/bash -c "cd /pmsat-inference && python -m pip inst
 
 \paragraph{Agent Framework and LLM Model Choice}
 
-We use mini-swe-agent~\cite{minisweagent}, version 1.17.1 to build \approach.
+We use mini-swe-agent~\cite{minisweagent}, version 1.17.1 for the base agent framework when building~\approach.
+We implement the tools in Python, version 3.12.10.
 Although mini-swe-agent supports any models supported by LiteLLM~\cite{litellm}, we mainly experimented with gpt-5-mini-2025-08-07 for our day-to-day experimentation and include gpt-5.1-2025-11-13 and gpt-5-nano-2025-08-07 for full-scale evaluation.
+
+\paragraph{Enforcing Validation on Exit Attempts}
+
+While developing~\approach, we observed that the LLM agent tries to prematurely exit its agentic loop although a judging mechanism we introduced (Section~\ref{s:judge}) gave the agent feedback on its errors.
+To prevent this, when the LLM agent tries to exit, we run extra round of judging and if the submitted script does not pass the judging, we yield back the control to the agent to enforce it to try harder until it succeeds or reaches its limits.
+This is inspired by similar mechanism employed by ExecutionAgent~\cite{DBLP:journals/pacmse/BouzeniaP25}.
 
 \paragraph{Separating Judge tool and Submit tool}
 
