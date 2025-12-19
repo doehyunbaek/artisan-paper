@@ -133,7 +133,7 @@ We start with 89 tables contained in the~\papersetsize~papers.
 (1) We exclude 21 non-result tables.
 Out of the 21 non-result tables excluded, 14 tables contain descriptions of evaluation setups, and 7 tables contain descriptions of the approach.
 (2) We exclude six tables that were missing code to reproduce the results.
-For all six tables, code reproducing the other parts of the experiment is present, but the code for some parts is missing.
+% For all six tables, code reproducing the other parts of the experiment is present, but the code for some parts is missing.
 (3) We exclude one table that requires 400GB of Ram to reproduce (Table 3 of Unimocg\cite{DBLP:conf/se/HelmRKRM25}).
 (4) We exclude one table that only contains non-deterministic results.
 For PPT4J~\cite{DBLP:conf/icse/Pan00Z0024}, Table 3, the table reports only the time consumption of the approaches.
@@ -142,8 +142,8 @@ For the remaining~\tablesetsize~tasks, we reproduce the tables and obtain ground
 
 Table~\ref{t:task_distribution} shows whether the tables used for the tasks are consistent or partial with respect to the tables in the paper.
 23 tables that we use for the benchmark are inconsistent with the table in the paper.
-For 19 tasks, this is due to~\newbug~that we found, which we discuss in detail in Section~\ref{s:inconsistencies}.
-For three, it is because the paper authors claim the results of the artifact could be slightly different from those in the paper~\cite{DBLP:journals/pacmse/Song0LCR24}, and for one, it is because the implementation used for the paper~\cite{DBLP:conf/kbse/Bock0C24} contains a bug, which is fixed now.
+For 20 tasks, this is due to~\newbug~that we found (Section~\ref{s:inconsistencies}).
+For three, it is because the paper authors claim the results of the artifact could be slightly different from those in the paper~\cite{DBLP:journals/pacmse/Song0LCR24}.
 19 tables that we use for the benchmark contain partial entries compared to the table in the paper.
 For 15, we could only partially reproduce the results of the original table with our ground truth scripts.
 For 4, we exclude the parts where the output is non-deterministic.

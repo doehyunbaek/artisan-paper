@@ -63,7 +63,7 @@ All tasks in \benchmark~are manually validated for reproducibility, and the benc
 This differs from previous benchmarks that rely on handcrafted results suitable for reproduction.
 (2) \benchmark~covers diverse software engineering techniques and programming languages.
 This contrasts with previous benchmarks limited in both software engineering techniques (ML / NLP) and programming languages (Python, R, and Stata).
-(3) \benchmark~includes reproduction tasks that require significant time (up to eight hours), extending the scope covered by standard benchmarks.
+(3) \benchmark~includes reproduction tasks that require significant time (up to eight hours), extending the scope covered by existing benchmarks.
 
 \begin{table}[t]
 \caption{Comparison of prior benchmarks and \benchmark. ML: Machine Learning. NLP: Natural Language Processing. CS: Computer Science. SS: Social Science. Med: Medicine. SE: Software Engineering.}
@@ -94,7 +94,7 @@ In the process, we uncovered \newbugsize~inconsistencies between papers and arti
 In summary, this paper contributes the following:
 \begin{itemize}
     \item Artisan, an LLM agent that automates artifact evaluation through code generation.
-    \item \benchmark, a benchmark that evaluates the code generation capabilities of LLM agents to reproduce Software Engineering papers.
+    \item \benchmark, a benchmark that evaluates the code generation capabilities of LLM agents to reproduce tables from Software Engineering papers.
     \item Empirical evaluation showing that Artisan generates \goodscripttsize{} new \goodscript{}, outperforming the baseline by \goodscripttsizeoutperform{}$\times$.
     \item Insights demonstrating that automated artifact evaluation through code generation can reveal paper-artifact inconsistencies and fast-paths taken by agents.
     \item Publicly available Artisan and \benchmark: https://github.com/doehyunbaek/artisan
