@@ -24,21 +24,7 @@ For RQ4-2, we use 60 ground truth scripts (30~\fullrepro~scripts, 30~\downrepro~
 
 \subsubsection{Baselines}
 
-As baselines, we select mini-swe-agent~\cite{minisweagent} and SWE-agent~\cite{sweagent}.
-We choose mini-swe-agent for two reasons:
-(1) \approach{} is built on top of mini-swe-agent; thus, comparing \approach{} with mini-swe-agent enables a thorough empirical study of \approach{}'s contributions.
-(2) mini-swe-agent achieves competitive performance (74.4\% resolved on SWE-Bench Verified with Claude Opus 4.5, compared to 78.8\% for the top score on the current leaderboard), while remaining simple (138~LOC in the core).
-We also include SWE-agent as an established state-of-the-art approach for general software engineering tasks.
-For both baselines and~\approach, we experiment with gpt-5.1-2025-11-13, gpt-5-mini-2025-08-07, and gpt-5-nano-2025-08-07 as an LLM model.
-
-To adopt mini-swe-agent to the task of~\benchmark, we give the same user prompt as in~\approach, minus the three tools that we present in Section~\ref{s:approach} and remove the validation on exit mechanism introduced in~\ref{s:implementation}.
-We present the diffs of the user prompt between mini-swe-agent and~\approach in Figure~\ref{s:line_diffs}.
-To adopt SWE-agent to the task of~\benchmark, we give the same user prompt as in mini-swe-agent but adds one last instruction to the workflow (``6. Copy the submission script: \verb|cp repro_{{ artifact_name }}_table_{{ table_index }}.sh /root/model.patch|'').
-This is to adopt SWE-agent's hard-coded APR task to our task.
-
-For both baselines and~\approach, we use the step limit of 30 and cost limit of one dollar per task.
-
-\begin{figure}[h]
+\begin{figure}[t]
 \begin{minted}{diff}
 > - `artisan get`: Download and extract the artifact from the official URL.
 > - `artisan format --expected expected.md --repro repro.txt`: Render final tables.
@@ -54,6 +40,20 @@ For both baselines and~\approach, we use the step limit of 30 and cost limit of 
 \label{s:line_diffs}
 \end{figure}
 
+As baselines, we select mini-swe-agent~\cite{minisweagent} and SWE-agent~\cite{sweagent}.
+We choose mini-swe-agent for two reasons:
+(1) \approach{} is built on top of mini-swe-agent; thus, comparing \approach{} with mini-swe-agent enables a thorough empirical study of \approach{}'s contributions.
+(2) mini-swe-agent achieves competitive performance (74.4\% resolved on SWE-Bench Verified with Claude Opus 4.5, compared to 78.8\% for the top score on the current leaderboard), while remaining simple (138~LOC in the core).
+We also include SWE-agent as an established state-of-the-art approach for general software engineering tasks.
+For both baselines and~\approach, we experiment with gpt-5.1-2025-11-13, gpt-5-mini-2025-08-07, and gpt-5-nano-2025-08-07 as an LLM model.
+
+To adopt mini-swe-agent to the task of~\benchmark, we give the same user prompt as in~\approach, minus the three tools that we present in Section~\ref{s:approach} and remove the validation on exit mechanism introduced in~\ref{s:implementation}.
+We present the diffs of the user prompt between mini-swe-agent and~\approach in Figure~\ref{s:line_diffs}.
+To adopt SWE-agent to the task of~\benchmark, we give the same user prompt as in mini-swe-agent but adds one last instruction to the workflow (``6. Copy the submission script: \verb|cp repro_{{ artifact_name }}_table_{{ table_index }}.sh /root/model.patch|'').
+This is to adopt SWE-agent's hard-coded APR task to our task.
+
+For both baselines and~\approach, we use the step limit of 30 and cost limit of one dollar per task.
+
 \subsubsection{Metrics}
 
 To evaluate effectiveness, we classify the submitted script by the baselines and~\approach~into six categories, following the classification introduced in Section~\ref{s:judge}.
@@ -65,14 +65,16 @@ Monetary cost includes the cost of the Format tool (Section~\ref{s:format}) and 
 To evaluate the fidelity of the Format tool, we measure what percentage of formatted output matches the expected output with the execution log we manually validated to contain all the expected results given as an input.
 To evaluate the accuracy of the Judge tool, we measure what percentage of judgement of reproduction matches with the ground truth reproduction method label we have.
 We repeat RQ4 experiments ten times to account for an LLM non-determinism.
+
+% \begin{table}[t]
+%   \caption{Effectiveness of \approach{} on \benchmark{}. GPT-5.1 used for model.}
+%   \label{t:big_table}
+%   \input{tables/big-table}
+% \end{table}
+
 \subsection{RQ1: Effectiveness}
 \label{s:effectiveness}
 
-\begin{table}[t]
-  \caption{Effectiveness of \approach{} on \benchmark{}. GPT-5.1 used for model.}
-  \label{t:big_table}
-  \input{tables/big-table}
-\end{table}
 
 \begin{table}[t]
   \caption{Comparison of \approach{} with baselines.}
@@ -94,6 +96,39 @@ We repeat RQ4 experiments ten times to account for an LLM non-determinism.
 
 \subsection{RQ4: Fidelity and Accuracy of LLM-Based Tools}
 \label{s:llmtools}
+
+\begin{table}[ht]
+    \centering
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \caption{Fidelity of LLM-based Format Tool}
+        \label{tab:efficiency}
+        \begin{tabular}{lccc}
+            \toprule
+            \textbf{Model} & \textbf{Success Rate} & \textbf{Cost} & \textbf{Time} \\
+            \midrule
+            gpt-5-nano & - & - & - \\
+            gpt-5-mini & - & - & - \\
+            gpt-5.1 & - & - & - \\
+            \bottomrule
+        \end{tabular}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \caption{Accuracy of LLM-based Judge Tool}
+        \label{tab:confusion}
+        \begin{tabular}{l|ccc}
+            \toprule
+            \textbf{Actual} $\backslash$ \textbf{Pred} & \textbf{Full} & \textbf{Last} & \textbf{Copy} \\
+            \midrule
+            \textbf{Full} & - & - & - \\
+            \textbf{Last-Mile} & - & - & - \\
+            \textbf{Copy} & - & - & - \\
+            \bottomrule
+        \end{tabular}
+    \end{minipage}
+\end{table}
 
 \subsubsection{RQ4-1: Fidelity of the Format tool}
 \label{s:eval_format}
