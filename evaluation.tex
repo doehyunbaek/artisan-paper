@@ -7,7 +7,7 @@ To evaluate our approach, we answer the following research questions:
 \item \textbf{RQ1. Effectiveness}:
 How effective is \approach{} at generating successful reproduction scripts?
 \item \textbf{RQ2. Efficiency}:
-How efficient is \approach{} in terms of execution time and monetary cost?
+How efficient is \approach{} in terms of monetary cost and execution time?
 \item \textbf{RQ3. Ablation Study}:
 What is the impact of different tools in different configurations?
 \item \textbf{RQ4. Fidelity and Accuracy of LLM-Based Tools}:
@@ -20,7 +20,7 @@ What is the fidelity of the LLM-based Format tool and the accuracy of the LLM-ba
 
 For RQ1, RQ2, and RQ3, we use \benchmark{} introduced in Section~\ref{s:benchmark} to evaluate our approach and the baselines.
 For RQ4-1, we use 60 ground truth scripts to prepare inputs used to evaluate the fidelity of the Format tool.
-For RQ4-2, we use 60 ground truth scripts (30~\fullrepro~scripts, 30~\downrepro~scripts), plus 25~\copyrepro~scripts that we collected during development, to evaluate the accuracy of the Judge tool.
+For RQ4-2, we use 60 ground truth scripts (30~\fullrepro~scripts, 30~\downrepro~scripts), plus~\fastpathsize~\copyrepro~scripts that we collected during development, to evaluate the accuracy of the Judge tool.
 
 \subsubsection{Baselines}
 
@@ -40,19 +40,19 @@ For RQ4-2, we use 60 ground truth scripts (30~\fullrepro~scripts, 30~\downrepro~
 \label{s:line_diffs}
 \end{figure}
 
-As baselines, we select mini-swe-agent~\cite{minisweagent} and SWE-agent~\cite{sweagent}.
-We choose mini-swe-agent for two reasons:
-(1) \approach{} is built on top of mini-swe-agent; thus, comparing \approach{} with mini-swe-agent enables a thorough empirical study of \approach{}'s contributions.
-(2) mini-swe-agent achieves competitive performance (74.4\% resolved on SWE-Bench Verified with Claude Opus 4.5, compared to 78.8\% for the top score on the current leaderboard), while remaining simple (138~LOC in the core).
-We also include SWE-agent as an established state-of-the-art approach for general software engineering tasks.
+As baselines, we select SWE-agent~\cite{sweagent} and mini-swe-agent~\cite{minisweagent}.
+We choose SWE-agent as an established state-of-the-art approach for general software engineering tasks.
+We choose mini-swe-agent as~\approach{} is built on top of mini-swe-agent. 
+Comparing \approach{} with mini-swe-agent enables a thorough empirical study of \approach{}'s contributions.
+% (2) mini-swe-agent achieves competitive performance (74.4\% resolved on SWE-Bench Verified with Claude Opus 4.5, compared to 78.8\% for the top score on the current leaderboard), while remaining simple (138~LOC in the core).
 For both baselines and~\approach, we experiment with gpt-5.1-2025-11-13, gpt-5-mini-2025-08-07, and gpt-5-nano-2025-08-07 as an LLM model.
+For both baselines and~\approach, we use the step limit of 30 and cost limit of one dollar per task.
 
 To adopt mini-swe-agent to the task of~\benchmark, we give the same user prompt as in~\approach, minus the three tools that we present in Section~\ref{s:approach} and remove the validation on exit mechanism introduced in~\ref{s:implementation}.
 We present the diffs of the user prompt between mini-swe-agent and~\approach in Figure~\ref{s:line_diffs}.
 To adopt SWE-agent to the task of~\benchmark, we give the same user prompt as in mini-swe-agent but adds one last instruction to the workflow (``6. Copy the submission script: \verb|cp repro_{{ artifact_name }}_table_{{ table_index }}.sh /root/model.patch|'').
 This is to adopt SWE-agent's hard-coded APR task to our task.
 
-For both baselines and~\approach, we use the step limit of 30 and cost limit of one dollar per task.
 
 \subsubsection{Metrics}
 
@@ -60,30 +60,58 @@ To evaluate effectiveness, we classify the submitted script by the baselines and
 For three categories where results of the submitted script fail to match the expected result, we automatically classify them into the three categories based on the execution outputs (Section~\ref{s:judge_execution}).
 For three categories where results of the submitted script match the expected result, we manually classify the type of the reproduction method (Section~\ref{s:judge_llm}).
 For the single metric of effectiveness, we report the sum of~\fullrepro~scripts and~\downrepro{}~scripts each approach generates, which we consider to be successful reproduction.
-To evaluate efficiency, we report total wall-clock time and monetary cost per task.
-Monetary cost includes the cost of the Format tool (Section~\ref{s:format}) and Judge tool (Section~ref{s:judge}).
+
+To evaluate efficiency, we report monetary cost per task and wall-clock time per task.
+Monetary cost includes the cost of the Format tool (Section~\ref{s:format}) and Judge tool (Section~\ref{s:judge}).
+Note also that when we measure time, it is an end-to-end time including the running time of experiments themselves.
+Thus, if a successful agent run involves running experiments that take few hours, that would lead to increase in average time.
+
 To evaluate the fidelity of the Format tool, we measure what percentage of formatted output matches the expected output with the execution log we manually validated to contain all the expected results given as an input.
 To evaluate the accuracy of the Judge tool, we measure what percentage of judgement of reproduction matches with the ground truth reproduction method label we have.
 We repeat RQ4 experiments ten times to account for an LLM non-determinism.
 
+\subsection{RQ1: Effectiveness}
+\label{s:effectiveness}
 % \begin{table}[t]
 %   \caption{Effectiveness of \approach{} on \benchmark{}. GPT-5.1 used for model.}
 %   \label{t:big_table}
 %   \input{tables/big-table}
 % \end{table}
-
-\subsection{RQ1: Effectiveness}
-\label{s:effectiveness}
-
-
 \begin{table}[t]
   \caption{Comparison of \approach{} with baselines.}
-  \label{t:Baseline}
+  \label{t:baseline}
   \input{tables/baseline}
 \end{table}
 
+The left-hand side of Table~\ref{t:baseline} shows the results for effectiveness.
+\approach~with gpt-5.1 gives the best result, successfully reproducing the expected table in 40 out of the 60 tasks (20 full reproduction and 20 last-mile reproduction).
+The second-best result is from~\approach~with gpt-5-mini with 26 successful reproductions out of 60 (12 full reproduction and 14 last-mile reproduction), even outperforming baselines with gpt-5.1.
+\approach~with gpt-5-nano effectively decreases the rate of static error to 8 out of 60 (compared to 49 / 60 for SWE-agent and 60 / 60 for mini-swe-agent) but does not lead to substantial increase in successful reproduction (only 1 / 60 success).
+Manual analysis of trajectories of~\approach~with gpt-5-nano reveals that gpt-5-nano significantly lacks the capacity to follow the given instruction, leading to more failures in the steps and quickly reaching the step limit (59 / 60).
+Still, the presence of Judge tool lets it avoid static errors at least.
+
+We manually analyze 20 cases where~\approach~with gpt-5.1 fails to reproduce the expected table.
+Our manual analysis reveals that~\todo.
+
+We also manually analyze 45 cases where mini-swe-agent with gpt-5.1 fails to reproduce the expected table, which is discussed in Section~\ref{s:ablation}.
+Here, we report the manual analysis of 58 cases where SWE-agent with gpt-5.1 fails to reproduce the expected table.
+Our manual analysis reveals that~\todo.
+
 \subsection{RQ2: Efficiency}
 \label{s:efficiency}
+
+The right-hand side of Table~\ref{t:baseline} shows the results for efficiency.
+In general, the trend is that to be more effective, you have to pay more in cost and time.
+\approach~is consistently the most expensive and time-consuming approach given the same model.
+
+Comparing~\approach~with less powerful LLMs with baselines show an interesting trend.
+\approach~with gpt-5-mini is more efficient in terms of cost, costing \$0.137 per instance, compared to mini-swe-agent with gpt-5.1 (\$0.285 per instance) and SWE-agent with gpt-5.1 (\$0.123 per instance), while being more effective.
+\approach~with gpt-5-nano is more efficient in terms of cost, costing \$0.061 per instance, compared to SWE-agent with gpt-5-mini (\$0.086 per instance), while being slightly more effective.
+This shows that the use of~\approach~leads to parento frontier not only in terms of effectiveness, but also in efficient but moderately effective part.
+
+One potential room for improvement for efficiency of~\approach~is cost of Format tool.
+While LLM-based Judge tool incurs minimal cost (less than \$0.001 per instance), Format tool incurs substantial cost, accounting for 52\% of total cost for~\approach~~with gpt-5-nano , 37\% for~\approach~with gpt-5-mini, 3\% for~\approach~with gpt-5.1.
+Although we chose gpt-5-mini as a LLM of choice to implement Format tool informed by our experiment in Section~\ref{s:eval_format}, this choice can be revisited depending on the use cases.
 
 \subsection{RQ3: Ablation Study}
 \label{s:ablation}
@@ -93,6 +121,20 @@ We repeat RQ4 experiments ten times to account for an LLM non-determinism.
   \label{t:ablation}
   \input{tables/ablation}
 \end{table}
+
+Table~\ref{t:ablation}~gives the result of our ablation study.
+As~\approach's difference with mini-swe-agent baseline is difference in user prompt described in Figure~\ref{s:line_diffs} with the validation on exit mechanism introduced in~\ref{s:implementation}, this lets us thorough study of the contributions of parts of our approach.
+For the ablation study, we prepare three additional variants of~\approach, excluding one tool at a time.
+
+To start, we present a result of manual analysis of failure cases of mini-swe-agent \todo.
+
+\approach~without Judge tool is the worst performing variant, \todo.
+
+\approach~without Format tool is the next variant, \todo.
+
+\approach~without Get tool is the final variant, \todo.
+
+To conclude, all tools in~\approach~contribute to the overall effectiveness of~\approach, which is shown by the difference of reproduction scripts produced and analysis.
 
 \subsection{RQ4: Fidelity and Accuracy of LLM-Based Tools}
 \label{s:llmtools}
@@ -133,5 +175,11 @@ We repeat RQ4 experiments ten times to account for an LLM non-determinism.
 \subsubsection{RQ4-1: Fidelity of the Format tool}
 \label{s:eval_format}
 
+We study the fidelity of the Format tool.
+\todo.
+
 \subsubsection{RQ4-2: Accuracy of the Judge tool}
 \label{s:eval_judge}
+
+We study the accuracy of the LLM-based Judge tool.
+\todo.
