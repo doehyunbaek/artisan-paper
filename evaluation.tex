@@ -42,7 +42,7 @@ For RQ4-2, we use 60 ground truth scripts (30~\fullrepro~scripts, 30~\downrepro~
 
 As baselines, we select SWE-agent~\cite{sweagent} and mini-swe-agent~\cite{minisweagent}.
 We choose SWE-agent as an established state-of-the-art approach for general software engineering tasks.
-We choose mini-swe-agent as~\approach{} is built on top of mini-swe-agent. 
+We choose mini-swe-agent as~\approach{} is built on top of mini-swe-agent.
 Comparing \approach{} with mini-swe-agent enables a thorough empirical study of \approach{}'s contributions.
 % (2) mini-swe-agent achieves competitive performance (74.4\% resolved on SWE-Bench Verified with Claude Opus 4.5, compared to 78.8\% for the top score on the current leaderboard), while remaining simple (138~LOC in the core).
 For both baselines and~\approach, we experiment with gpt-5.1-2025-11-13, gpt-5-mini-2025-08-07, and gpt-5-nano-2025-08-07 as an LLM model.
@@ -84,18 +84,33 @@ We repeat RQ4 experiments ten times to account for an LLM non-determinism.
 \end{table}
 
 The left-hand side of Table~\ref{t:baseline} shows the results for effectiveness.
-\approach~with gpt-5.1 gives the best result, successfully reproducing the expected table in 40 out of the 60 tasks (20 full reproduction and 20 last-mile reproduction).
+\approach~with gpt-5.1 gives the best result, successfully reproducing the expected table in~\goodscripttsize~out of the 60 tasks (20 full reproduction and 21 last-mile reproduction).
 The second-best result is from~\approach~with gpt-5-mini with 26 successful reproductions out of 60 (12 full reproduction and 14 last-mile reproduction), even outperforming baselines with gpt-5.1.
 \approach~with gpt-5-nano effectively decreases the rate of static error to 8 out of 60 (compared to 49 / 60 for SWE-agent and 60 / 60 for mini-swe-agent) but does not lead to substantial increase in successful reproduction (only 1 / 60 success).
 Manual analysis of trajectories of~\approach~with gpt-5-nano reveals that gpt-5-nano significantly lacks the capacity to follow the given instruction, leading to more failures in the steps and quickly reaching the step limit (59 / 60).
 Still, the presence of Judge tool lets it avoid static errors at least.
 
-We manually analyze 20 cases where~\approach~with gpt-5.1 fails to reproduce the expected table.
-Our manual analysis reveals that~\todo.
+We manually analyze 19 cases where~\approach~with gpt-5.1 fails to reproduce the expected table.
+Our manual analysis reveals that for 16 / 19 tasks which~\approach~fails to reproduce expected tables,~\approach~exceeds the step limit of 30 and exits.
+This is due to our mechanism of running validation on exit attempt (Section~\ref{s:implementation}) which forces the agent to keep trying until obtaining successful result.
+For 3 / 19 tasks, the submission passed the automated validation but still fails to reproduce the expected results.
+2 tasks failed due to the non-determinism of LLM-based Format tool and 2 tasks failed to fail due to the non-determinism of LLM-based Judge tool.
+For 7 / 16 tasks, Get tool fails to download the artifact due to network error for one case.
+As we target the live artiafct repositories as our target, some of the instabilities are inavoidable.
+During the development, we even encountered a Cloudflare outrage that prevented us from evaluating our approach \cite{cloudflare}.
+Although disabled for fair evaluation, the caching mechanism of the Get tool (Section~\ref{s:get}) would help mitigate the network errors in the in-the-wild usage.
+For 3 / 16 tasks, LLM struggles with instruction following and quickly wastes the remaining steps by running \emph{echo} commands.
+For 2 / 16 tasks, docker runtime exits for unknown reason.
+For 4 / 16 reamining tasks,~\approach~fails to find successful~\goodscript~given the budget.
 
+\todo{Redo the SWE-agent experiments}
 We also manually analyze 45 cases where mini-swe-agent with gpt-5.1 fails to reproduce the expected table, which is discussed in Section~\ref{s:ablation}.
 Here, we report the manual analysis of 58 cases where SWE-agent with gpt-5.1 fails to reproduce the expected table.
-Our manual analysis reveals that~\todo.
+For all 42 static errors that SWE-agent encounter, it is due to SWE-agent failing to create the submission script.
+For 24 / 42 of such cases, SWE-agent errors while making request to the agent runtime.
+For 18 / 42, SWE-agent exceeds the step limit before creating the script for submission.
+For 5 tasks that SWE-agent generated script encounter runtime-error, three tasks are terminated due to step limit and two tasks are submitted within step limits but still fail.
+For all 11 tasks that SWE-agent generated script does not match with the expected table, SWE-agent submits a script that runs without any errors but the results differ.
 
 \subsection{RQ2: Efficiency}
 \label{s:efficiency}
