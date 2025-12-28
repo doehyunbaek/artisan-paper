@@ -10,19 +10,6 @@
   \input{tables/inconsistencies}
 \end{table}
 
-\begin{table}[ht]
-    \centering
-    \caption{Frequency of Fast Paths Taken by Agents}
-    \label{tab:fastpath_counts}
-    \begin{tabular}{ccccc}
-        \toprule
-         \textbf{Papers} & \textbf{Checked-in Results} & \textbf{Notebook Outputs} & \textbf{Other methods} & \textbf{Total} \\
-        \midrule
-        - & - & - & - & \fastpathsize \\
-        \bottomrule
-    \end{tabular}
-\end{table}
-
 During the development of~\approach, we have encountered~\newbugsize~cases where there was some errors in papers or artifacts, which we encountered through numerical results being output by artifacts being inconsistent with the papers, a phenomena we term~\newbug.
 To be clear, we do not classify cases where artifacts themselves warn about the possible inconsistencies as~\newbug; thus all~\newbugsize~we report are newly discovered errors that have not been disclosed publicly before.
 Table~\ref{t:inconsistencies} summarizes the~\newbug~we found.
@@ -53,6 +40,63 @@ Two out of three artifact errors are already fixed and the authors shared an int
 
 \subsection{Fast Paths Taken by Agents}
 \label{s:fastpath}
+
+\begin{table}[t]
+    \centering
+    \caption{Frequency of Fast Paths Taken by Agents}
+    \label{t:fastpath}
+    \begin{tabular}{cccccc}
+        \toprule
+         \textbf{Checked-in Results} & \textbf{Checked-in Papers}  & \textbf{Notebook Outputs} & \textbf{Paper Texts} & \textbf{Others} & \textbf{Total} \\
+        \midrule
+        12 & 7 & 7 & 3 & 1 & \fastpathsize \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+% action_table_2.log: Notebook Outputs
+% action_table_3.log: Notebook Outputs
+% action_table_5.log: Notebook Outputs
+% action_table_6.log: Notebook Outputs
+% baro_table_2.log: Checked-in Papers
+% bloat_table_3.log: Other (Paper Texts)
+% buggyui_table_2.log: Checked-in Papers
+% dcm_table_3.log: Checked-in Papers
+% fuzzslice_table_1.log: Checked-in Papers
+% gradual_table_3.log: Checked-in Results
+% hypertesting_table_1.log: Checked-in Results
+% lasapp_table_2.log: Other (Paper Texts)
+% llm_table_1.log: Notebook Outputs
+% llm_table_2.log: Checked-in Papers
+% llm_table_3.log: Notebook Outputs
+% mwt_table_2.log: Other (download from arxiv)
+% newton_table_4.log: Notebook Outputs
+% provenfix_table_2.log: Checked-in Results
+% provenfix_table_3.log: Checked-in Results
+% rca_table_3.log: Checked-in Papers
+% reclues_table_4.log: Checked-in Papers
+% rust_table_1.log: Checked-in Results
+% rust_table_5.log: Other (Paper Texts)
+% sugar_table_2.log: Checked-in Results
+% trace2inv_table_7.log: Checked-in Results
+% triad_table_3.log: Checked-in Results
+% unimocg_table_1.log: Checked-in Results
+% unimocg_table_2.log: Checked-in Results
+% unimocg_table_3.log: Checked-in Results
+% unimocg_table_4.log: Checked-in Results
+
+During the development of~\approach, we have encountered~\fastpathsize~cases where agents generate~\goodscript~that merely copies checked-in results as a method of ``reproduction'', a phenomena we term~\fastpath.
+Although similar misalignment issues are reported in other domains~\todo{cite}, to our knowledge, we are the first to report a misalignment issue of this kind in he domain or artifact evaluation.
+
+We perform a manual analysis of trajectories of agents that produced these~\fastpath, and report the findings in Table~\ref{t:fastpath}.
+For 12 / 30 cases, artifacts contain some checked-in research results (Checked-in Results).
+Agents discover them while exploring the artifact and directly copy these results.
+For 7 / 30 cases, artifacts contain papers in pdf forms (Checked-in Papers).
+Agents convert the pdfs into a text-readable form and directly copy the expected tables.
+For 7 / 30 cases, artifacts contain Jupyter Notebooks which contain the output of the previous run, which agents directly copy (Notebook Outputs).
+For 3 / 30 cases, although we give a obfuscated table when we provide the paper, agents still try to read the texts surrounding the obfuscated table and infer the expected results (Paper Texts).
+Lastly, on one case, after other attempts fail, the agent directly downloads the paper by searching arxiv.org with the paper title and obtains the preprint.
+These various ways of obtaining research results while actually not doing the reproduction shows a need for verification of not only the output but the method of reproduction, as done by~\approach.
 
 \subsection{Threats To Validity}
 \label{s:threats}
