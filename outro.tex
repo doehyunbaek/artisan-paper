@@ -101,8 +101,21 @@ These various ways of obtaining research results while actually not doing the re
 \subsection{Threats To Validity}
 \label{s:threats}
 
+Our effectiveness results are influenced by the step limit (30 steps) and the cost limit (\$1) we used.
+Effectiveness result could potentially improve with larger step limits and cost limits.
+However, we judge this is a reasonable amount that researchers are willing to spend for the automated reproduction of the single table.
+In addition, results of~\approach~are limited to the paper selected due to the process described in Section~\ref{s:paper_select}.
+Thus,~\approach~is only evaluated on Software Engineering papers that are packaged using Docker, that are packaged using docker, that do not use non-public API or GPU.
+To be clear,~\approach~can be applied to artifacts that do not use Docker for packaging and do use non-public API or GPU.
+We motivate this limited evaluation as a measure to reduce the manual cost of reproducing each research results and automated cost of running~\benchmark~both in terms of monetary cost and execution time.
+
 \subsection{Limitations}
 \label{s:limitations}
+
+\approach~can not reproduce non-numerical results, as it lacks a capacity to judge a reproduction of the non-numerical research results is correct or not.
+Thus,~\approach can not reproduce research results such as figures.
+\approach~can not reproduce non-deterministic results, as the Judge tool only accepts one deterministic results as a valid reproduction.
+Thus,~\approach can not reproduce research results such as running time.
 
 \section{Related work}
 \label{sec:relatetd}
