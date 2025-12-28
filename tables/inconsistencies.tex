@@ -1,28 +1,28 @@
-\begin{tabular}{l r r r r}
+\begin{tabular}{l r r r r r}
 \toprule
-\textbf{Table File} & \textbf{\# Diff Cells} & \textbf{Paper Value} & \textbf{Artifact Value} &\textbf{Reason} \\
+\textbf{Paper ID} & \textbf{Table Index} & \textbf{\# Diff Cells} & \textbf{Paper Value} & \textbf{Artifact Value} &\textbf{Reason} \\
 \midrule
-action\_table\_1.md & 4 & 0.30 & 0.32 & Paper Error\textsuperscript{\textdagger} \\
-action\_table\_2.md & 29 & 33.8 & 36.2 & Paper Error\textsuperscript{\textdagger} \\
-action\_table\_3.md & 1 & 66.3 & 66.4 & Rounding Error \\
-action\_table\_4.md & 21 & -55.14 & -62.63 & Paper Error\textsuperscript{\textdagger} \\
-action\_table\_5.md & 5 & -10.41 & -99.78 & Paper Error\textsuperscript{\textdagger} \\
-axa\_table\_1.md & 2 & 14 & 1 & Artifact Error\textsuperscript{\textdagger} \\
-bazel\_table\_5.md & 4 & 28 & 29 & Transcription Error\textsuperscript{\textdagger} \\
-dypybench\_table\_3.md & 1 & 1701 & 1543 & Artifact Error\textsuperscript{\textdagger}\textsuperscript{1} \\
-interference\_table\_2.md & 4 & $8.13 \times 10^{285960}$ & $8.58 \times 10^{506}$ & Paper Error \\
-lasapp\_table\_1.md & 1 & 1549 & 1553 & Artifact Error\textsuperscript{\textdagger}\textsuperscript{2} \\
-llm\_table\_3.md & 4 & 1.15 & 0.15 & Paper Error \\
-npetest\_table\_2.md & 27 & 100 & 68 &  Data Difference\textsuperscript{\textdagger} \\
-npetest\_table\_3.md & 2 & 73 & 74 &  Data Difference\textsuperscript{\textdagger} \\
-pmsat\_table\_3.md & 1 & 0.6 & 0.5 & Rounding Error \\
-pmsat\_table\_5.md & 1 & 17.33 & 17.3 & Rounding Error \\
-pythonic\_table\_3.md & 5 & 0.14 & 0.24 & Paper Error \\
-pythonic\_table\_4.md & 1 & 0.15 & 0.16 & Rounding Error \\
-pythonic\_table\_9.md & 1 & 0.04 & 0.05 & Rounding Error \\
-rust\_table\_1.md & 6 & 98.88\% & 98.93\% & Data Difference\textsuperscript{\textdagger}\\
-sctype\_table\_3.md & 2 & 1 & 2 & Paper Error \\
-urcrat\_table\_1.md & 1 & 72199 & 72201 & Data Difference\textsuperscript{\textdagger}\\
+action \cite{action} & 1 & 4 & 0.30 & 0.32 & Paper Error\textsuperscript{\textdagger} \\
+action \cite{action} & 2 & 29 & 33.8 & 36.2 & Paper Error\textsuperscript{\textdagger} \\
+action \cite{action} & 3 & 1 & 66.3 & 66.4 & Rounding Error \\
+action \cite{action} & 4 & 21 & -55.14 & -62.63 & Paper Error\textsuperscript{\textdagger} \\
+action \cite{action} & 5 & 5 & -10.41 & -99.78 & Paper Error\textsuperscript{\textdagger} \\
+axa \cite{axa} & 1 & 2 & 14 & 1 & Artifact Error\textsuperscript{\textdagger} \\
+bazel \cite{bazel} & 5 & 4 & 28 & 29 & Transcription Error\textsuperscript{\textdagger} \\
+dypybench \cite{dypybench} & 3 & 1 & 1701 & 1543 & Artifact Error\textsuperscript{\textdagger}\textsuperscript{1} \\
+interference \cite{interference} & 2 & 4 & $8.13 \times 10^{285960}$ & $8.58 \times 10^{506}$ & Paper Error \\
+lasapp \cite{lasapp} & 1 & 1 & 1549 & 1553 & Artifact Error\textsuperscript{\textdagger}\textsuperscript{2} \\
+llm \cite{llm} & 3 & 4 & 1.15 & 0.15 & Paper Error \\
+npetest \cite{npetest} & 2 & 27 & 100 & 68 &  Data Difference\textsuperscript{\textdagger} \\
+npetest \cite{npetest} & 3 & 2 & 73 & 74 &  Data Difference\textsuperscript{\textdagger} \\
+pmsat \cite{pmsat} & 3 & 1 & 0.6 & 0.5 & Rounding Error \\
+pmsat \cite{pmsat} & 5 & 1 & 17.33 & 17.3 & Rounding Error \\
+pythonic \cite{pythonic} & 3 & 5 & 0.14 & 0.24 & Paper Error \\
+pythonic \cite{pythonic} & 4 & 1 & 0.15 & 0.16 & Rounding Error \\
+pythonic \cite{pythonic} & 9 & 1 & 0.04 & 0.05 & Rounding Error \\
+rust \cite{rust} & 1 & 6 & 98.88\% & 98.93\% & Data Difference\textsuperscript{\textdagger}\\
+sctype \cite{sctype} & 3 & 2 & 1 & 2 & Paper Error \\
+urcrat \cite{urcrat} & 1 & 1 & 72199 & 72201 & Data Difference\textsuperscript{\textdagger}\\
 \bottomrule
 \end{tabular}
 \footnotesize \textsuperscript{1}Fixed by https://github.com/sola-st/DyPyBench/commit/bccfda7

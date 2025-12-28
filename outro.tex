@@ -23,6 +23,34 @@
     \end{tabular}
 \end{table}
 
+During the development of~\approach, we have encountered~\newbugsize~cases where there was some errors in papers or artifacts, which we encountered through numerical results being output by artifacts being inconsistent with the papers, a phenomena we term~\newbug.
+To be clear, we do not classify cases where artifacts themselves warn about the possible inconsistencies as~\newbug; thus all~\newbugsize~we report are newly discovered errors that have not been disclosed publicly before.
+Table~\ref{t:inconsistencies} summarizes the~\newbug~we found.
+Overall, we found~\newbugsize~\newbug~from 13 papers.
+This accounts for 22\% (13 / 60) of the papers we applied~\approach.
+Note that all of the 60 papers that we apply~\approach~underwent an artifact evaluation process in the major SE conferences, and got awarded Artifacts Evaluated - Reusable badge.
+Still, our approach could find inconsistencies in up to 29 entries in a table, and a value different up to $8.13 \times 10^{285960}$.
+
+To give more insight into the~\newbug~we found, we perform a manual analysis to find out the reasons for the inconsistencies.
+We come out with five different categories of reasons for~\newbug.
+% Rounding Error
+5 /~\newbugsize~belong to Rounding Error, which we attribute when the inconsistencies found could be explained away by the wrong use of the rounding algorithm.
+For the rest of the Inconsistencies, we reported our analysis to the paper authors.
+12 / 16 of the reported inconsistencies received confirmations by the authors.
+% Data Difference
+4 / 16 belong to Data Difference, which we attribute when the data used in the paper is different from the data present in the artifact.
+For all four such cases, the data used in the paper is lost, rendering the faithful reproduction of the paper results unlikely.
+This highlights the need for automated artifact evaluation technique like~\approach, which could have prevented such cases had it been applied earlier.
+% Artifact Error
+3 / 16 belong to Artifact Error, which we attribute when we could find apparent errors in the artifact data or code.
+Two out of three artifact errors are already fixed and the authors shared an intention to fix the remaining one.
+\footnote{For Artifact Error of lasapp\cite{lasapp}, both the number of the paper and the artifact used for the paper results were buggy. We applied~\approach~to the fixed version of the artifact as the buggy version was not accessible to the public, which led to the disclosure of the buggy version.}
+% Transcription Error
+1 / 16 belong to Transcription Error, which we attribute when the inconsistencies likely stemed from manual process of transcribing artifact values to the paper.
+% Paper Error
+8 / 16 belong to Paper Error, which is a general catch-all category of all inconsistencies attributable to error in the paper.
+\todo{more analysis on 8 paper errrors.}
+
 \subsection{Fast Paths Taken by Agents}
 \label{s:fastpath}
 
