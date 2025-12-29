@@ -73,21 +73,23 @@
 
 \title{Artisan: Automated Artifact Evaluation with Agents}
 \begin{abstract}
-Artifact evaluation has become a standard practice in the research community to ensure the reproducibility of research results.
-However, the current process remains notoriously labor-intensive.
-To mitigate this, recent work has explored using LLM agents to automatically reproduce research results.
-However, these approaches mostly frame the problem as an output prediction task, which (1) cannot distinguish between agent errors and artifact errors when results mismatch and (2) ignores how the output is obtained.
-To address this, we present \approach, an automated artifact evaluation approach utilizing an LLM agent that frames the task as a code generation task.
-Given a numerical result from a paper, \approach~autonomously takes actions to reproduce the result.
+Artifact evaluation has become a standard practice in the software engineering community to ensure the reproducibility of research results.
+However, the current manual process remains notoriously labor-intensive.
+To mitigate the manual effort, we present \approach, the first automated artifact evaluation approach utilizing an LLM agent tasked with code generation.
+% that frames the task as a code generation task.
+Given numerical results from a paper, \approach~autonomously takes actions to reproduce the results.
 Subsequently, \approach~encapsulates this knowledge into a \emph{\goodscript}, which can be run independently to reproduce the results.
 If the results mismatch, it could be that the error stems from either the paper or the artifact, which we term \emph{\newbug}.
-If the results match, our judging mechanism uses an LLM-as-Judge to evaluate the completeness of the reproduction.
-This mechanism precludes trivial~\goodscript~that merely copies checked-in results, which we term \emph{\fastpath}.
-To evaluate \approach, we introduce \benchmark, a new benchmark assessing LLM agents' capabilities to generate \goodscript.
-\benchmark~comprises 60 tasks derived from 23 Software Engineering papers.
+If the results match, our judging mechanism uses an LLM-as-judge to evaluate the completeness of the reproduction.
+This mechanism precludes trivial~\goodscript s that merely copies checked-in results, which we term \emph{\fastpath}.
+% The core difference of~\artisan~and the current state-of-the-art is its realistic problem formulation and task formulation as code generation task.
+% To mitigate the manual effort, recent work has explored using LLM agents to automatically reproduce research results.
+% However, these approaches mostly frame the problem as an output prediction task, which (1) cannot distinguish between agent errors and artifact errors when results mismatch and (2) ignores how the output is obtained.
+To evaluate \approach, we introduce \benchmark, the first benchmark assessing LLM agents' capabilities to generate \goodscript s.
+\benchmark~comprises 60 tasks derived from 23 software engineering papers.
 All tasks in \benchmark~are manually validated for reproducibility and cover diverse software engineering techniques and programming languages.
-Our experiments show that \approach~is effective, producing \goodscripttsize{} new \goodscript{}~and outperforming the baseline by \goodscripttsizeoutperform{}$\times$, while taking~\artisancost~and~\artisantime~on average per task.
-Furthermore, applying \approach~to~\benchmark~uncovered~\newbugsize~\newbug~and~\fastpathsize~\fastpath, demonstrating the strength of our approach.
+Our experiments show that \approach~is effective, producing~\goodscripttsize{}~new reproduction scripts and outperforming the baseline, mini-swe-agent, by \goodscripttsizeoutperform{}$\times$ in terms of  s generated while taking~\artisancost~and~\artisantime~on average per task.
+Furthermore, applying \approach~to~\benchmark~uncovered~\newbugsize~\newbug~and~\fastpathsize~\fastpath, demonstrating the practical utility of our approach.
 \end{abstract}
 \maketitle
 
