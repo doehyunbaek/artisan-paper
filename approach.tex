@@ -8,16 +8,23 @@
 \section{Approach}
 \label{s:approach}
 
-We first give a brief overview of the approach (Section~\ref{s:overview}).
+We first define the problem we address (Section~\ref{s:problem_def}), introduce challenges we solve (Section~\ref{s:challenges}), and give a brief overview of the approach (Section~\ref{s:overview}).
 Then, we provide a detailed explanation of the three tools that we provide to the agent (Sections \ref{s:get}, \ref{s:format}, \ref{s:judge}).
 Finally, we explain the implementation details (Section~\ref{s:implementation}).
+
+\subsection{Problem Definition}
+\label{s:problem_def}
+
+\subsection{Challenges}
+\label{s:challenges}
+
 
 \subsection{Overview}
 \label{s:overview}
 
 \begin{figure}[t]
   \centering
-  \begin{minted}{markdown}
+  \begin{minted}[fontsize=\scriptsize]{markdown}
 ## Goal
 Please reproduce the results reported in Table 6 from the SE paper.
 <obfuscated_result>
@@ -35,7 +42,7 @@ The paper that the result is from is available at `/workspace/paper.md`.
 2. **Read the README** to understand reproduction steps.
 3. **Locate relevant commands** for Table 6.
 4. **Execute the required commands** step-by-step.
-5. **Author the reproduction script** `repro.sh` using the template below.
+5. **Author the reproduction script** `repro_action_table_6.sh` using the template below.
   \end{minted}
   \caption{Example user prompt provided to the agent}
   \Description{Example user prompt provided to the agent}
@@ -44,12 +51,12 @@ The paper that the result is from is available at `/workspace/paper.md`.
 
 \begin{figure}[t]
   \centering
-  \begin{minted}{bash}
+  \begin{minted}[fontsize=\scriptsize]{bash}
 #!/bin/bash
 artisan get https://zenodo.org/records/10529665 # Section 2.2: Get tool
 <Commands to reproduce the results> # Filled out by LLM Agent later
-artisan format obfuscated.md execution.txt # Section 2.3: Format tool
-artisan judge repro.txt # Section 2.4: Judge tool
+artisan format obfuscated.md repro.log # Section 2.3: Format tool
+artisan judge repro_action_table_6.sh # Section 2.4: Judge tool
   \end{minted}
   \caption{Example script template provided to the agent.}
   \Description{Example script template provided to the agent.}
@@ -156,7 +163,7 @@ Executing Group 1
     \Description{Part of the execution output provided as input.}
     \label{f:format_input_log}
   \end{subfigure}
-  \caption{Example input given to the Format tool.}
+  \caption{Example input given to the Format tool for Table 3 of ScType~\cite{sctype}.}
   \label{f:format_input}
 \end{figure}
 
@@ -186,11 +193,13 @@ Thus, we propose a two-tier judging system which addresses both problems: execut
 
 In our approach, LLM agents generate and submit a shell script that runs independently of any agent-related machinery.
 Given the submission, our execution-based judging mechanism runs the submitted script in a fresh container environment.
-The judging mechanism classifies three cases where the submitted script fails judging in this phase:
-(1) Static Error: when the submitted script fails to run because of a syntax error, the judging mechanism judges the script as a static error and gives the error message as feedback.
-We also consider cases where the script is missing from the expected path as static error.
-(2) Runtime Error: when the submitted script encounters an error while running, the judging mechanism judges the script as a runtime error and returns which command caused the error with the error message.
-(3) Result Mismatch: when the submitted script runs to completion without any error but the result differs from the expected values, the judging mechanism judges the script as a result mismatch.
+The judging mechanism classifies three cases where the results produced by the submitted script do not match the expected results:
+\begin{itemize}
+  \item \textbf{\staticerror}: The submitted script fails to run because of a syntax error or script is missing from the expected path.
+  \item \textbf{\runtimeerror}: The submitted script encounters a runtime error while running.
+  The judging mechanism returns which command errored with what message as a feedback.
+  \item \textbf{\mismatcherror}: The submitted script runs to completion without any error but the result differs from the expected values.
+\end{itemize}
 
 \begin{figure}[t]
   \centering
@@ -201,8 +210,8 @@ We also consider cases where the script is missing from the expected path as sta
 |   | Resolved   | 7,799,929 |
 |   | Unresolved |   260,249 |
     \end{minted}
-    \caption{Expected Results}
-    \Description{Expected Results}
+    \caption{Part of the expected results}
+    \Description{Part of the expected results}
     \label{f:judge_execution_example_1}
   \end{subfigure}
   \hfill
@@ -213,8 +222,8 @@ We also consider cases where the script is missing from the expected path as sta
 |   | Resolved   | 7,799,929 |
 |   | Unresolved |   168,482 |
     \end{minted}
-    \caption{Actual Results}
-    \Description{Actual Results}
+    \caption{Part of the actual results}
+    \Description{Part of the actual results}
     \label{f:judge_execution_example_2}
   \end{subfigure}
   \hfill
@@ -229,7 +238,7 @@ We also consider cases where the script is missing from the expected path as sta
     \Description{Feedback Given to the Agents}
     \label{f:judge_execution_example_3}
   \end{subfigure}
-  \caption{Example of the Result Mismatch Feedback}
+  \caption{Example of the Result Mismatch Feedback for Table 2 of Drosos et al.~\cite{bloat}.}
   \label{f:judge_execution_example}
 \end{figure}
 
@@ -247,9 +256,11 @@ This is made possible due to our feedback mechanism, which does not leak the exp
 Even if the submitted~\goodscript~produces results that match the expected results, it is still possible that no real reproduction is performed and results are obtained through inappropriate means.
 Thus, our second phase of judging adopts an LLM-as-Judge to grade how the reproduction is conducted.
 The judging mechanism classifies three categories of the reproduction method:
-(1) \copyrepro{}: The submitted script just copies the results without actually reproducing.
-(2) \downrepro{}: The submitted script performs lightweight reproduction, skipping some time-consuming steps.
-(3) \fullrepro{}: The submitted script performs the full reproduction possible.
+\begin{itemize}
+  \item \textbf{\copyrepro{}}: The submitted script just copies the results without actually reproducing.
+  \item \textbf{\downrepro{}}: The submitted script performs lightweight reproduction, skipping some time-consuming steps.
+  \item \textbf{\fullrepro{}}: The submitted script performs the full reproduction possible.
+\end{itemize}
 
 Figure~\ref{f:judge_llm_example}~gives an example of each variant.
 In Figure~\ref{f:judge_llm_example_1}, the script directly copies the checked-in result for submission.
@@ -265,52 +276,46 @@ This is the ideal case, especially if it can be achieved within a reasonable tim
   \centering
   \begin{subfigure}[t]{1\textwidth}
     \begin{minted}[fontsize=\scriptsize, breaklines=true]{bash}
-cat artifact/InvCon+/results.txt > /workspace/repro.txt
+cp Unimocg_Artifact/summaries/summary_results_fingerprint.txt /workspace/repro.log
     \end{minted}
-    \caption{Example~\copyrepro{}~scripts.}
-    \Description{Example~\copyrepro{}~scripts.}
+    \caption{Example~\copyrepro{}~scripts for Table 1 of Unimocg~\cite{DBLP:conf/se/HelmRKRM25}.}
+    \Description{Example~\copyrepro{}~scripts for Table 1 of Unimocg~\cite{DBLP:conf/se/HelmRKRM25}.}
     \label{f:judge_llm_example_1}
   \end{subfigure}
   \hfill
   \begin{subfigure}[t]{1\textwidth}
     \begin{minted}[fontsize=\scriptsize, breaklines=true]{bash}
-docker-compose run pmsat python parse_all_results_timeouts.py benchmarkingset-rc2-results > /workspace/repro.txt
+docker-compose run pmsat python parse_all_results_timeouts.py benchmarkingset-rc2-results > /workspace/repro.log
     \end{minted}
-    \caption{Example~\downrepro{}~scripts.}
-    \Description{Example~\downrepro{}~scripts.}
+    \caption{Example~\downrepro{}~scripts for Table 3 of Wallner et al.~\cite{pmsat}.}
+    \Description{Example~\downrepro{}~scripts for Table 3 of Wallner et al.~\cite{pmsat}.}
     \label{f:judge_llm_example_2}
   \end{subfigure}
   \hfill
   \begin{subfigure}[t]{1\textwidth}
     \begin{minted}[fontsize=\scriptsize, breaklines=true]{bash}
-docker-compose run pmsat /bin/bash -c "cd /pmsat-inference && python -m pip install 'numpy<2' && python run_pmsat_on_traces.py examples-results/ping_pong_example/info.json -nmax 7 && MPLBACKEND=Agg python parse_single_run_results.py TRACE-results/92e710ef352c4739cd7569794272588a" > /workspace/repro.txt
+docker-compose run pmsat /bin/bash -c "cd /pmsat-inference && python -m pip install 'numpy<2' && python run_pmsat_on_traces.py examples-results/ping_pong_example/info.json -nmax 7 && MPLBACKEND=Agg python parse_single_run_results.py TRACE-results/92e710ef352c4739cd7569794272588a" > /workspace/repro.log
     \end{minted}
-    \caption{Example~\fullrepro{}~scripts.}
-    \Description{Example~\fullrepro{}~scripts.}
+    \caption{Example~\fullrepro{}~scripts for Table 2 of Wallner et al.~\cite{pmsat}.}
+    \Description{Example~\fullrepro{}~scripts for Table 2 of Wallner et al.~\cite{pmsat}.}
     \label{f:judge_llm_example_3}
   \end{subfigure}
   \caption{Example of the reproduction mechanisms.}
   \label{f:judge_llm_example}
 \end{figure}
 
-\subsection{Implementation}
-\label{s:implementation}
-
-\paragraph{Agent Framework and LLM Model Choice}
-
-We use mini-swe-agent~\cite{minisweagent}, version 1.17.1 for the base agent framework when building~\approach.
-We implement the tools in Python, version 3.12.10.
-Although mini-swe-agent supports any models supported by LiteLLM~\cite{litellm}, we mainly experimented with gpt-5-mini-2025-08-07 for our day-to-day experimentation and include gpt-5.1-2025-11-13 and gpt-5-nano-2025-08-07 for full-scale evaluation.
-
-\paragraph{Enforcing Validation on Exit Attempts}
+\subsubsection{Enforcing Validation on Exit Attempts}
 
 While developing~\approach, we observed that the LLM agent tries to prematurely exit its agentic loop although a judging mechanism we introduced (Section~\ref{s:judge}) gave the agent feedback on its errors.
 To prevent this, when the LLM agent tries to exit, we run extra round of judging and if the submitted script does not pass the judging, we yield back the control to the agent to enforce it to try harder until it succeeds or reaches its limits.
 This is inspired by similar mechanism employed by ExecutionAgent~\cite{DBLP:journals/pacmse/BouzeniaP25}.
 
+\subsection{Implementation}
+\label{s:implementation}
+
 \paragraph{Separating Judge tool and Submit tool}
 
 Initially, the agents were given the judge tool to self-grade the submissions themselves.
-This led to undesirable results as agents could access the expected results themselves, leaking the results.
+As the judge tool requires expected results to determine if the submission matches the expected results, this led to agents directly accessing the expected results themselves, bypassing the judging mechanism.
 Thus, in our implementation, we use a client-server architecture where the agents use the Submit tool to submit the script to the server, whereas the Judge tool is the server that receives the incoming submitted script, grades the submission following the method described in Section~\ref{s:judge}, and returns the results to the Submit tool.
 This prevents the leakage issue.

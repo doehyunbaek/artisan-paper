@@ -16,6 +16,12 @@ What is the performane of the LLM-based Format tool and the accuracy of the LLM-
 
 \subsection{Experimental Setup}
 
+\subsubsection{Agent Framework and LLM Model Choice}
+
+We use mini-swe-agent~\cite{minisweagent}, version 1.17.1 for the base agent framework when building~\approach.
+We implement the tools in Python, version 3.12.10.
+Although mini-swe-agent supports any models supported by LiteLLM~\cite{litellm}, we mainly experimented with gpt-5-mini-2025-08-07 for our day-to-day experimentation and include gpt-5.1-2025-11-13 and gpt-5-nano-2025-08-07 for full-scale evaluation.
+
 \subsubsection{Datasets}
 
 For RQ1, RQ2, and RQ3, we use \benchmark{} introduced in Section~\ref{s:benchmark} to evaluate our approach and the baselines.
