@@ -15,9 +15,44 @@ Finally, we explain the implementation details (Section~\ref{s:implementation}).
 \subsection{Problem Definition}
 \label{s:problem_def}
 
+The problem we address is as follows: Given a research paper, a table from the research paper, an artifact accompnaying the research paper, we want to automatically generate a script that reproduces the table with the given artifact.
+The generated script would encapsulate all the logic to reproduce the given table from scratch, from downloading the artifact, exercising the artifact, and formatting the execution logs into a expected table.
+
+We address this problem in a way that has two important properties.
+First, the approach should reproduce the exact table from the research paper as-is.
+Previous works on automated research reproduction~\cite{super,corebench}~relies on research results hand-crafted by the researchers themselves for the purpose of constructing challenging but solvable tasks for the LLM agents.
+However, to achieve the goal of automating artifact evaluation, and to measure the progress on this goal, we judge having the most realistic setup is required.
+As a result,~\approach~is evalauated on the original tables from the research paper in the majority of cases (41 / 60) in our evaluation (Section~\ref{s:task_select}), notwithstanding some partial tables due to the limitations (Section~\ref{s:limitations}).
+
+Second, the approach should produce script that runs independently without the involvement of the agent.
+Previous work on automated research reproduction~\cite{reprobench,heye,super,corebench} utilizes LLM agents to reproduce research results.
+But even if these agents succeed, the outcome is either in the form of rating~\cite{reprobench,heye} or output~~\cite{super,corebench}.
+The users of these agents should either blindly trust the outcome or go through the process of analyzing the often lengthy agent trajectories.
+We propose that tasking LLM agents with generating script that reproduces the table solves this problem.
+The users of~\approach~do not have to trust the LLM agents or analyze the trajectories; they can just run and analyze the script these LLM agents have generated.
+The script-based reproduction also aids in discovering both~\newbug~(Section~\ref{s:inconsistencies}) and~\fastpath~(Section~\ref{s:fastpath}), as manual effort to verify if the reproduction is correct is reduced.
+
 \subsection{Challenges}
 \label{s:challenges}
 
+While the proposed approach has the aformentiend advantages, a few challenges accompany the proposed approach.
+We have encountered following challenges during development, which motivates our development of domain-specific tools for artifact evaluation:
+\subsubsection{Agents struggle with formatting execution logs into expected outputs}
+\label{s:format_challenge}
+
+Even after an agent has successfully reproduced research results by running a series of commands, the outputs of the commands are usually not exactly the same as what is presented in the paper.
+Some artifacts also provide scripts that process these execution outputs into the format used in the paper, but many artifacts do not.
+Of course, an LLM agent can try to write the missing processing script itself, but we found that it struggles to write such scripts in many cases.
+Often, an LLM agent successfully ran commands necessary to reproduce the research results but could not get the correct score from the judge because the formatting of the execution outputs was inadequate.
+
+\subsubsection{Agents struggle with choosing appropriate means of reproduction}
+\label{s:judge_challenge}
+
+In previous work developing output-based agents~\cite{super, corebench}, we found two characteristics that were inadequate for our problem formulation:
+(1) The agents do not get feedback on their submission while they are working on the problem.
+This becomes problematic in our case, as generating code that reproduces the result is a more complex problem and has more room for error than outputting just the result.
+(2) How the agents obtain the output is not judged.
+We observe many~\fastpath~that agents take while attempting to reproduce the result (Section~\ref{s:fastpath}), and proper consideration of this phenomenon is important for the accurate assessment of the LLM agents' capabilities.
 
 \subsection{Overview}
 \label{s:overview}
@@ -53,7 +88,6 @@ The paper that the result is from is available at `/workspace/paper.md`.
   \centering
   \begin{minted}[fontsize=\scriptsize]{bash}
 #!/bin/bash
-artisan get https://zenodo.org/records/10529665 # Section 2.2: Get tool
 <Commands to reproduce the results> # Filled out by LLM Agent later
 artisan format obfuscated.md repro.log # Section 2.3: Format tool
 artisan judge repro_action_table_6.sh # Section 2.4: Judge tool
@@ -64,7 +98,8 @@ artisan judge repro_action_table_6.sh # Section 2.4: Judge tool
 \end{figure}
 
 An LLM agent is an LLM-based system that uses tools to autonomously interact with the environment to achieve a given goal, provided in the form of a user prompt~\cite{DBLP:conf/icse/BouzeniaDP25}.
-Figure~\ref{f:user_prompt} gives an example of a user prompt given to our LLM agent to task it to generate~\goodscript~that reproduces Table 6 of Bouzenia and Pradel~\cite{DBLP:conf/icse/BouzeniaP24}.
+
+% Figure~\ref{f:user_prompt} gives an example of a user prompt given to our LLM agent to task it to generate~\goodscript~that reproduces Table 6 of Bouzenia and Pradel~\cite{DBLP:conf/icse/BouzeniaP24}.
 
 As a goal, the LLM agent is given a numerical result to reproduce, albeit with results obfuscated with question marks.
 While developing our approach, we found that giving the results unobfuscated led to the undesirable behavior of directly copying the given results.
@@ -88,18 +123,22 @@ Lastly, to guide the agent in reproducing the research result, we allow the agen
 By calling the Judge tool, the agent can get feedback on whether (1) the output of the generated code matches the actual results, and (2) the way~\goodscript~generates the output is appropriate.
 The agent can incorporate the feedback if either of the two conditions is not met, guiding the reproduction process.
 
-\subsection{\emph{Get} tool: Fetching Research Artifacts}
-\label{s:get}
+\todo{overview figure}
 
-There currently exist multiple different repository providers that researchers use to archive their artifacts, including Zenodo, Figshare, and GitHub.
-Without a specialized tool, an LLM agent can still retrieve the artifact by utilizing CLI tools like \texttt{curl}.
-However, we found that agents stumble when interacting with repository APIs initially.
-In addition, complex probing of repository APIs makes the code generation task more complicated, leading to more errors.
+\todo{algorithm}
 
-To mitigate this, we implement the Get tool, which the agent can invoke with just the URL to fetch the research artifact.
-It handles the repository-specific logic silently, downloads the research artifact, extracts the research artifact, and locates the README file.
-It also supports caching of artifacts that have already been fetched.
-While simple, we found that this is an effective strategy that helps the agent in initial fetching and also in generating~\goodscript.
+% \subsection{\emph{Get} tool: Fetching Research Artifacts}
+% \label{s:get}
+
+% There currently exist multiple different repository providers that researchers use to archive their artifacts, including Zenodo, Figshare, and GitHub.
+% Without a specialized tool, an LLM agent can still retrieve the artifact by utilizing CLI tools like \texttt{curl}.
+% However, we found that agents stumble when interacting with repository APIs initially.
+% In addition, complex probing of repository APIs makes the code generation task more complicated, leading to more errors.
+
+% To mitigate this, we implement the Get tool, which the agent can invoke with just the URL to fetch the research artifact.
+% It handles the repository-specific logic silently, downloads the research artifact, extracts the research artifact, and locates the README file.
+% It also supports caching of artifacts that have already been fetched.
+% While simple, we found that this is an effective strategy that helps the agent in initial fetching and also in generating~\goodscript.
 
 \subsection{\emph{Format} tool: Formatting Execution Outputs into Results}
 \label{s:format}
@@ -167,12 +206,7 @@ Executing Group 1
   \label{f:format_input}
 \end{figure}
 
-Even after an agent has successfully reproduced research results by running a series of commands, the outputs of the commands are usually not exactly the same as what is presented in the paper.
-Some artifacts also provide scripts that process these execution outputs into the format used in the paper, but many artifacts do not.
-Of course, an LLM agent can try to write the missing processing script itself, but we found that it struggles to write such scripts in many cases.
-Often, an LLM agent successfully ran commands necessary to reproduce the research results but could not get the correct score from the judge because the formatting of the execution outputs was inadequate.
-
-To address this, we implement the Format tool, which is an LLM-based formatter that takes an obfuscated results and execution log as input and outputs a formatted results.
+To address the challenge introduced in Section ~\ref{s:format_challenge},, we implement the Format tool, which is an LLM-based formatter that takes an obfuscated results and execution log as input and outputs a formatted results.
 Figure~\ref{f:format_input} shows an example input that is passed to the Format tool.
 While the research results are structured in a tabular format (Figure~\ref{f:format_input_result}), the output of the execution is just a log file (Figure~\ref{f:format_input_log}), lacking structure.
 In addition, the log file is 1,103 lines in total.
@@ -181,12 +215,7 @@ The Format tool passes the obfuscated results and execution output as inputs wit
 \subsection{\emph{Judge} tool: Evaluating Reproduction Attempts}
 \label{s:judge}
 
-In previous work developing output-based agents~\cite{super, corebench}, we found two characteristics that were inadequate for our problem formulation:
-(1) The agents do not get feedback on their submission while they are working on the problem.
-This becomes problematic in our case, as generating code that reproduces the result is a more complex problem and has more room for error than outputting just the result.
-(2) How the agents obtain the output is not judged.
-We observe many~\fastpath~that agents take while attempting to reproduce the result (Section~\ref{s:fastpath}), and proper consideration of this phenomenon is important for the accurate assessment of the LLM agents' capabilities.
-Thus, we propose a two-tier judging system which addresses both problems: execution-based judging of the code output (Section~\ref{s:judge_execution})~and LLM-based judging of the reproduction method (Section~\ref{s:judge_llm}).
+To address the challenge introduced in Section ~\ref{s:judge_challenge},, we propose a two-tier judging system which addresses both problems: execution-based judging of the code output (Section~\ref{s:judge_execution})~and LLM-based judging of the reproduction method (Section~\ref{s:judge_llm}).
 
 \subsubsection{Execution-Based Judging of Reproduction Scripts}
 \label{s:judge_execution}
