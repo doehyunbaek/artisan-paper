@@ -8,5 +8,6 @@
 *.fls
 *.log
 *.out
-*.pdf
+acm.pdf
+ieee.pdf
 _minted

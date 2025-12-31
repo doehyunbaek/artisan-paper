@@ -62,28 +62,61 @@ We observe many~\fastpath~that agents take while attempting to reproduce the res
 \subsection{Overview}
 \label{s:overview}
 
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{figures/overview.pdf}
+  \caption{Overview of \approach.}
+  \Description{Overview of \approach.}
+  \label{f:overview}
+\end{figure}
+
+Figure~\ref{f:overview}~gives overview of~\approach.
+Per the problem definition (Section~\ref{s:problem_def}), a user of~\approach~provide paper, table, and artifact to~\approach, with the table obfuscated.
+Then,~\approach~, an LLM agent based approach tries to generate a reproduction script, which is a bash script that reproduces the table from scratch using the artifact.
 An LLM agent is an LLM-based system that uses tools to autonomously interact with the environment to achieve a given goal, provided in the form of a user prompt~\cite{DBLP:conf/icse/BouzeniaDP25}.
-
-
 As a workflow, the LLM agent is provided with a series of steps that should be taken to reproduce a numerical result from the research paper.
 We only provide high-level objectives that should be taken at each step, and the LLM agent autonomously executes actions to achieve these objectives.
-The five-step workflow provided to the agent is modeled after how researchers would tackle the problem of reproducing research artifacts themselves.
-The last step of the workflow, authoring the reproduction script, is the key distinction of our approach compared to existing work.
-As we try to automate the artifact evaluation by tasking LLM agents to generate~\goodscript{}, we provide a script template that agents should follow to guide the generation.
+The workflow provided to the agent is modeled after how researchers would tackle the problem of reproducing research artifacts themselves.
 
-First, agents should fetch the artifact from different artifact repositories.
-We provide the Get tool (Section~\ref{s:get}) to offer a unified interface to the artifact repositories.
-Then, the agent autonomously exercises the fetched artifact to reproduce the research results.
-As the commands needed to reproduce the results vary from artifact to artifact, we ask the agent to review the commands it has executed to fill in the necessary commands.
-Next, the agent has to analyze and format the execution logs into the expected format.
-To support this, we provide the Format tool (Section~\ref{s:format}), which is an LLM-based formatter that takes an expected results and execution log as input and outputs a formatted results.
-Lastly, to guide the agent in reproducing the research result, we allow the agent to get feedback on the \goodscript~they have generated with the Judge tool (Section~\ref{s:judge}).
+LLM agent is provided with three tools to achieve its goal.
+First, LLM agent is provided with Bash tool~\cite{minisweagent}~as a Swiss Army knife: the agent performs all regular CLI use tasks like reading a file, writing a file, running commands, using the single Bash tool.
+In addition,~\approach~provides two tools developed for the domain-specific challenges (Section~\ref{s:challenges}) of automated artifact evaluation.
+First, to aid the agent in analyzing and formatting the execution logs into the expected format (Section~\ref{s:format_challenge}),~\approach~provides the Format tool (Section~\ref{s:format_challenge}), which is an LLM-based formatter that takes an expected results and execution log as input and outputs a formatted results.
+Second, to aid the agent in choosing appropriate means of reproduction (Section~\ref{s:judge_challenge}),~\approach~provides the Judge tool (Section~\ref{s:judge}) which gives feedback on the \goodscript~submitted.
 By calling the Judge tool, the agent can get feedback on whether (1) the output of the generated code matches the actual results, and (2) the way~\goodscript~generates the output is appropriate.
 The agent can incorporate the feedback if either of the two conditions is not met, guiding the reproduction process.
+High-level algorithm is described in Algorithm~\ref{alg:artisan}, which will be explained in detail in the following sections.
 
-\todo{overview figure}
+\begin{algorithm}[t]
+\caption{High-level algorithm of Artisan}
+\label{alg:artisan}
+\begin{algorithmic}[1]
+\State \textbf{Input:} Paper $p$, Obfuscated table $t$, Artifact $a$
+\State \textbf{Output:} Reproduction script $s$
+\State $\text{step\_limit} \gets 30, \ H \gets []$
+\While{$\text{step\_limit} > 0$}
+    \State $\text{thought}, \text{cmd} \gets \text{LLM}(\text{SystemPrompt}, \text{UserPrompt}, H)$
 
-\todo{algorithm}
+    \If{$\text{cmd} \neq \text{"submits"}$}
+        \State $\text{obs} \gets \text{execute}(\text{cmd})$
+    \Else
+        \State $s \gets \text{read\_script}()$
+        \If{$J_{exec}(s) \neq \text{OK}$} \Comment{\textbf{Step 1: Execution-Based Output Check}}
+            \State $\text{obs} \gets \text{Warning}(\text{"Syntax or Runtime Error"})$
+        \Else
+            \If{$J_{method}(s) == \text{CopyRepro}$} \Comment{\textbf{Step 2: LLM-Based Method Check}}
+                \State $\text{obs} \gets \text{Warning}(\text{"Method rejected: No credit for CopyRepro."})$
+            \Else
+                \State \Return $s$ \Comment{Validated Success}
+            \EndIf
+        \EndIf
+    \EndIf
+
+    \State $H.\text{append}(\text{thought}, \text{cmd}, \text{obs})$
+    \State $\text{step\_limit} \gets \text{step\_limit} - 1$
+\EndWhile
+\end{algorithmic}
+\end{algorithm}
 
 % \subsection{\emph{Get} tool: Fetching Research Artifacts}
 % \label{s:get}
