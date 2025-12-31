@@ -65,6 +65,7 @@ This is to adopt SWE-agent's hard-coded APR task to our task.
 
 To evaluate effectiveness, we classify the submitted script by the baselines and~\approach~into six categories, following the classification introduced in Section~\ref{s:judge}.
 For three categories where results of the submitted script fail to match the expected result, we automatically classify them into the three categories based on the execution outputs (Section~\ref{s:judge_execution}).
+\todo{Should we also manually validate Mismatch Results in case they are correct? Due to format tool non-determinism.}
 For three categories where results of the submitted script match the expected result, we manually classify the type of the reproduction method (Section~\ref{s:judge_llm}).
 For the single metric of effectiveness, we report the sum of~\fullrepro~scripts and~\downrepro{}~scripts each approach generates, which we consider to be successful reproduction.
 
