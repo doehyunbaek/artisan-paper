@@ -57,49 +57,7 @@ We observe many~\fastpath~that agents take while attempting to reproduce the res
 \subsection{Overview}
 \label{s:overview}
 
-\begin{figure}[t]
-  \centering
-  \begin{minted}[fontsize=\scriptsize]{markdown}
-## Goal
-Please reproduce the results reported in Table 6 from the SE paper.
-<obfuscated_result>
-**Table 6: Sensitivity of deactivating scheduled workflows to the parameter k.**
-
-| k                     |    1 |    2 |    5 |   10 |   15 |   20 |
-| --------------------- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Impact on VM time (%) | -?.? | -?.? | -?.? | -?.? | -?.? | -?.? |
-</obfuscated_result>
-The same result is available at `/workspace/obfuscated.md`.
-The paper that the result is from is available at `/workspace/paper.md`.
-
-## Workflow overview
-1. **Download the artifact** from https://zenodo.org/records/10529665.
-2. **Read the README** to understand reproduction steps.
-3. **Locate relevant commands** for Table 6.
-4. **Execute the required commands** step-by-step.
-5. **Author the reproduction script** `repro_action_table_6.sh` using the template below.
-  \end{minted}
-  \caption{Example user prompt provided to the agent}
-  \Description{Example user prompt provided to the agent}
-  \label{f:user_prompt}
-\end{figure}
-
-\begin{figure}[t]
-  \centering
-  \begin{minted}[fontsize=\scriptsize]{bash}
-#!/bin/bash
-<Commands to reproduce the results> # Filled out by LLM Agent later
-artisan format obfuscated.md repro.log # Section 2.3: Format tool
-artisan judge repro_action_table_6.sh # Section 2.4: Judge tool
-  \end{minted}
-  \caption{Example script template provided to the agent.}
-  \Description{Example script template provided to the agent.}
-  \label{f:script_template}
-\end{figure}
-
 An LLM agent is an LLM-based system that uses tools to autonomously interact with the environment to achieve a given goal, provided in the form of a user prompt~\cite{DBLP:conf/icse/BouzeniaDP25}.
-
-% Figure~\ref{f:user_prompt} gives an example of a user prompt given to our LLM agent to task it to generate~\goodscript~that reproduces Table 6 of Bouzenia and Pradel~\cite{DBLP:conf/icse/BouzeniaP24}.
 
 As a goal, the LLM agent is given a numerical result to reproduce, albeit with results obfuscated with question marks.
 While developing our approach, we found that giving the results unobfuscated led to the undesirable behavior of directly copying the given results.
@@ -112,7 +70,6 @@ The five-step workflow provided to the agent is modeled after how researchers wo
 The last step of the workflow, authoring the reproduction script, is the key distinction of our approach compared to existing work.
 As we try to automate the artifact evaluation by tasking LLM agents to generate~\goodscript{}, we provide a script template that agents should follow to guide the generation.
 
-Figure~\ref{f:script_template} shows the script template we provide.
 First, agents should fetch the artifact from different artifact repositories.
 We provide the Get tool (Section~\ref{s:get}) to offer a unified interface to the artifact repositories.
 Then, the agent autonomously exercises the fetched artifact to reproduce the research results.

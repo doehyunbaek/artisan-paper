@@ -16,12 +16,6 @@ What is the performane of the LLM-based Format tool and the accuracy of the LLM-
 
 \subsection{Experimental Setup}
 
-\subsubsection{Agent Framework and LLM Model Choice}
-
-We use mini-swe-agent~\cite{minisweagent}, version 1.17.1 for the base agent framework when building~\approach.
-We implement the tools in Python, version 3.12.10.
-Although mini-swe-agent supports any models supported by LiteLLM~\cite{litellm}, we mainly experimented with gpt-5-mini-2025-08-07 for our day-to-day experimentation and include gpt-5.1-2025-11-13 and gpt-5-nano-2025-08-07 for full-scale evaluation.
-
 \subsubsection{Datasets}
 
 For RQ1, RQ2, and RQ3, we use \benchmark{} introduced in Section~\ref{s:benchmark} to evaluate our approach and the baselines.
@@ -29,10 +23,57 @@ For RQ4-1, we use 60 ground truth scripts to prepare execution logs used to eval
 We manually validate all execution logs to contain all the expected results.
 For RQ4-2, we use 60 ground truth scripts (30~\fullrepro~scripts, 30~\downrepro~scripts), plus~\fastpathsize~\copyrepro~scripts that we collected during development, to evaluate the accuracy of the Judge tool.
 
+\subsubsection{Agent Framework and User Prompt}
+
+We use mini-swe-agent~\cite{minisweagent}, version 1.17.1 for the base agent framework when building~\approach.
+We implement the tools in Python, version 3.12.10.
+% Although mini-swe-agent supports any models supported by LiteLLM~\cite{litellm}, we mainly experimented with gpt-5-mini-2025-08-07 for our day-to-day experimentation and include gpt-5.1-2025-11-13 and gpt-5-nano-2025-08-07 for full-scale evaluation.
+Figure~\ref{f:user_prompt} gives an example of a user prompt given to our LLM agent to task it to generate~\goodscript~that reproduces Table 6 of Bouzenia and Pradel~\cite{DBLP:conf/icse/BouzeniaP24}.
+
 \subsubsection{Baselines}
 
 \begin{figure}[t]
-\begin{minted}{diff}
+  \centering
+  \begin{minted}[fontsize=\scriptsize]{markdown}
+## Goal
+Please reproduce the results reported in Table 6 from the SE paper.
+<obfuscated_result>
+**Table 6: Sensitivity of deactivating scheduled workflows to the parameter k.**
+
+| k                     |    1 |    2 |    5 |   10 |   15 |   20 |
+| --------------------- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Impact on VM time (%) | -?.? | -?.? | -?.? | -?.? | -?.? | -?.? |
+</obfuscated_result>
+The same result is available at `/workspace/obfuscated.md`.
+The paper that the result is from is available at `/workspace/paper.md`.
+
+## Workflow overview
+1. **Download the artifact** from https://zenodo.org/records/10529665.
+2. **Read the README** to understand reproduction steps.
+3. **Locate relevant commands** for Table 6.
+4. **Execute the required commands** step-by-step.
+5. **Author the reproduction script** `repro_action_table_6.sh` using the template below.
+  \end{minted}
+  \caption{Example user prompt provided to the mini-swe-agent tasked with reproducing Table 6 of Bouzenia and Pradel~\cite{DBLP:conf/icse/BouzeniaP24}.}
+  \Description{Example user prompt provided to the mini-swe-agent tasked with reproducing Table 6 of Bouzenia and Pradel~\cite{DBLP:conf/icse/BouzeniaP24}.}
+  \label{f:user_prompt}
+\end{figure}
+
+% \begin{figure}[t]
+%   \centering
+%   \begin{minted}[fontsize=\scriptsize]{bash}
+% #!/bin/bash
+% <Commands to reproduce the results> # Filled out by LLM Agent later
+% artisan format obfuscated.md repro.log # Section 2.3: Format tool
+% artisan judge repro_action_table_6.sh # Section 2.4: Judge tool
+%   \end{minted}
+%   \caption{Example script template provided to the agent.}
+%   \Description{Example script template provided to the agent.}
+%   \label{f:script_template}
+% \end{figure}
+
+\begin{figure}[t]
+\begin{minted}[fontsize=\scriptsize]{diff}
 > - `artisan get`: Download and extract the artifact from the official URL.
 > - `artisan format --expected expected.md --repro repro.txt`: Render final tables.
 > - `artisan submit`: Submit your reproduction script for evaluation.
@@ -47,19 +88,16 @@ For RQ4-2, we use 60 ground truth scripts (30~\fullrepro~scripts, 30~\downrepro~
 \label{s:line_diffs}
 \end{figure}
 
-As baselines, we select SWE-agent~\cite{sweagent} and mini-swe-agent~\cite{minisweagent}.
-We choose SWE-agent as an established state-of-the-art approach for general software engineering tasks.
+
+As baselines, we select mini-swe-agent~\cite{minisweagent} and SWE-agent~\cite{sweagent}.
 We choose mini-swe-agent as~\approach{} is built on top of mini-swe-agent.
 Comparing \approach{} with mini-swe-agent enables a thorough empirical study of \approach{}'s contributions.
 % (2) mini-swe-agent achieves competitive performance (74.4\% resolved on SWE-Bench Verified with Claude Opus 4.5, compared to 78.8\% for the top score on the current leaderboard), while remaining simple (138~LOC in the core).
-For both baselines and~\approach, we experiment with gpt-5.1-2025-11-13, gpt-5-mini-2025-08-07, and gpt-5-nano-2025-08-07 as an LLM model.
-For both baselines and~\approach, we use the step limit of 30 and cost limit of one dollar per task.
-
-To adopt mini-swe-agent to the task of~\benchmark, we give the same user prompt as in~\approach, minus the three tools that we present in Section~\ref{s:approach} and remove the validation on exit mechanism introduced in~\ref{s:implementation}.
-We present the diffs of the user prompt between mini-swe-agent and~\approach in Figure~\ref{s:line_diffs}.
-To adopt SWE-agent to the task of~\benchmark, we give the same user prompt as in mini-swe-agent but adds one last instruction to the workflow (``6. Copy the submission script: \verb|cp repro_{{ artifact_name }}_table_{{ table_index }}.sh /root/model.patch|'').
-This is to adopt SWE-agent's hard-coded APR task to our task.
-
+\approach~can be understood as the baseline mini-swe-agent plus the three tools that we present in Section~\ref{s:approach}, which we provide with the added user prompts shown in Figure~\ref{s:line_diffs}.
+We choose SWE-agent as an established state-of-the-art approach for general software engineering tasks.
+To adopt SWE-agent to the task of~\benchmark, we give the same user prompt as in mini-swe-agent but adds one last instruction to the workflow to adopt SWE-agent's hard-coded APR task to our task.
+\footnote{6. Copy the submission script: \texttt{cp repro\_\{\{ artifact\_name \}\}\_table\_\{\{ table\_index \}\}.sh /root/model.patch}}
+For both baselines and~\approach, we experiment with gpt-5.1-2025-11-13, gpt-5-mini-2025-08-07, and gpt-5-nano-2025-08-07 as an LLM model, and use the step limit of 30 and cost limit of one dollar per task.
 
 \subsubsection{Metrics}
 
