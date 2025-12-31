@@ -18,6 +18,11 @@ Finally, we explain the implementation details (Section~\ref{s:implementation}).
 The problem we address is as follows: Given a research paper, a table from the research paper, an artifact accompnaying the research paper, we want to automatically generate a script that reproduces the table with the given artifact.
 The generated script would encapsulate all the logic to reproduce the given table from scratch, from downloading the artifact, exercising the artifact, and formatting the execution logs into a expected table.
 
+When we provide a table to the the LLM agent, we provide the table with digits obfuscated with question marks.
+While developing our approach, we found that giving the table unobfuscated led to the undesirable behavior of directly copying the given results.
+By giving results in an obfuscated form, we instruct LLM agents on what to reproduce but not on what the expected values are.
+The table of the same obfuscated table is used for the provided paper as well.
+
 We address this problem in a way that has two important properties.
 First, the approach should reproduce the exact table from the research paper as-is.
 Previous works on automated research reproduction~\cite{super,corebench}~relies on research results hand-crafted by the researchers themselves for the purpose of constructing challenging but solvable tasks for the LLM agents.
@@ -59,10 +64,6 @@ We observe many~\fastpath~that agents take while attempting to reproduce the res
 
 An LLM agent is an LLM-based system that uses tools to autonomously interact with the environment to achieve a given goal, provided in the form of a user prompt~\cite{DBLP:conf/icse/BouzeniaDP25}.
 
-As a goal, the LLM agent is given a numerical result to reproduce, albeit with results obfuscated with question marks.
-While developing our approach, we found that giving the results unobfuscated led to the undesirable behavior of directly copying the given results.
-By giving results in an obfuscated form, we instruct LLM agents on what to reproduce but not on what the expected values are.
-In addition, the content of the paper is provided to the agent, with the results to reproduce obfuscated as well.
 
 As a workflow, the LLM agent is provided with a series of steps that should be taken to reproduce a numerical result from the research paper.
 We only provide high-level objectives that should be taken at each step, and the LLM agent autonomously executes actions to achieve these objectives.
