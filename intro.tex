@@ -11,10 +11,10 @@ Reports indicate that evaluating a single artifact can take eight to ten hours, 
 Moreover, the current process yields the \emph{Artifacts Evaluated} badge as its outcome~\cite{acm-artifact-badging-v1_1}, which has limited signal with regards to its reproducibility.
 (1) The badge is coarse-grained: Even if the artifact has the badge, some parts of the paper could be not reproducible.
 % Researchers should try the reproduction themselves to find out which part is reproducible or not.
-(2) The badge is an one-time assessment: The badge signals that the artifact has worked at the time of manual artifact evaluation, but does not imply it works now.
+(2) The badge is an one-time assessment: The badge signals that the artifact worked at the time of manual artifact evaluation, but does not imply it works now.
 In fact, recent work on the reproducibility of artifacts~\cite{DBLP:journals/corr/abs-2510-25506} indicates that even artifacts awarded the \emph{Artifacts Evaluated} badge often fail to remain reproducible even one year later.
 
-Motivated by this limitation, we pose the question: \emph{What if we task LLM agents with generating code that automates the research reproduction}?
+Motivated by this limitation, we pose the question: \emph{What if we task LLM agents with generating code that reproduces the results}?
 The automated artifact evaluation powered by code generating LLM agents would have the following benefits:
 (1) It saves a lot of manual effort.
 (2) It scales to much larger number of papers and artifacts.
@@ -57,6 +57,8 @@ Output-based agents~\cite{super, corebench} produce the numerical results they h
 Nevertheless, like rating-based agents, when these agents fail to reproduce results, it is unclear whether the error lies with the agent or the artifact.
 Given that agents are an emerging technique, failures are typically attributed to the agent.
 To our knowledge, there are no reports of errors in artifacts identified by agents during reproduction attempts.
+\approach~differs from the previous work by using~\goodscript~as an output of agents.
+This enables judging of the script, which can be utilized to discover both~\newbug~and~\fastpath.
 
 % \caption{Comparison of prior benchmarks and \benchmark. ML: Machine Learning. NLP: Natural Language Processing. CS: Computer Science. SS: Social Science. Med: Medicine. SE: Software Engineering.}
 % \label{t:benchmark_comparison}

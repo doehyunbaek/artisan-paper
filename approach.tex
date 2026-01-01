@@ -41,6 +41,16 @@ The script-based reproduction also aids in discovering both~\newbug~(Section~\re
 
 While the proposed approach has the aformentiend advantages, a few challenges accompany the proposed approach.
 We have encountered following challenges during development, which motivates our development of domain-specific tools for artifact evaluation:
+\todo{Decide on tools to include in approach}
+
+\subsubsection{Agents struggle with fetching research repositoreis}
+\label{s:get_challenge}
+
+There currently exist multiple different repository providers that researchers use to archive their artifacts, including Zenodo, Figshare, and GitHub.
+Without a specialized tool, an LLM agent can still retrieve the artifact by utilizing CLI tools like \texttt{curl}.
+However, we found that agents stumble when interacting with repository APIs initially.
+In addition, complex probing of repository APIs makes the code generation task more complicated, leading to more errors.
+
 \subsubsection{Agents struggle with formatting execution logs into expected outputs}
 \label{s:format_challenge}
 
@@ -117,18 +127,18 @@ High-level algorithm is described in Algorithm~\ref{alg:artisan}, which will be 
 \end{algorithmic}
 \end{algorithm}
 
-% \subsection{\emph{Get} tool: Fetching Research Artifacts}
-% \label{s:get}
+\subsection{\emph{Get} tool: Fetching Research Artifacts}
+\label{s:get}
 
-% There currently exist multiple different repository providers that researchers use to archive their artifacts, including Zenodo, Figshare, and GitHub.
-% Without a specialized tool, an LLM agent can still retrieve the artifact by utilizing CLI tools like \texttt{curl}.
-% However, we found that agents stumble when interacting with repository APIs initially.
-% In addition, complex probing of repository APIs makes the code generation task more complicated, leading to more errors.
+There currently exist multiple different repository providers that researchers use to archive their artifacts, including Zenodo, Figshare, and GitHub.
+Without a specialized tool, an LLM agent can still retrieve the artifact by utilizing CLI tools like \texttt{curl}.
+However, we found that agents stumble when interacting with repository APIs initially.
+In addition, complex probing of repository APIs makes the code generation task more complicated, leading to more errors.
 
-% To mitigate this, we implement the Get tool, which the agent can invoke with just the URL to fetch the research artifact.
-% It handles the repository-specific logic silently, downloads the research artifact, extracts the research artifact, and locates the README file.
-% It also supports caching of artifacts that have already been fetched.
-% While simple, we found that this is an effective strategy that helps the agent in initial fetching and also in generating~\goodscript.
+To mitigate this, we implement the Get tool, which the agent can invoke with just the URL to fetch the research artifact.
+It handles the repository-specific logic silently, downloads the research artifact, extracts the research artifact, and locates the README file.
+It also supports caching of artifacts that have already been fetched.
+While simple, we found that this is an effective strategy that helps the agent in initial fetching and also in generating~\goodscript.
 
 \subsection{\emph{Format} tool: Formatting Execution Outputs into Results}
 \label{s:format}
